@@ -10,12 +10,13 @@ import org.dirtymechanics.frc.sensor.RotationalEncoder;
  */
 public class PIDBoom{
     static final double P = .018d;
+    static double D = .009; // The boom, she wants the D
    PIDSubsystem pid;
    public static Location PID_PASS = new Location(500);//GROUND;//new Location(3.26);
    public static final Location PID_ARM_UP_LIMIT = new Location(150);//GROUND;//new Location(3.26);
-   public static final Location PID_ARM_DOWN_LIMIT = new Location(800);//GROUND;//new Location(3.26);
+   public static final Location PID_ARM_DOWN_LIMIT = new Location(780);//GROUND;//new Location(3.26);
    public static final Location MAX = new Location(200);
-   public static final Location MIN = new Location(790);
+   public static final Location MIN = new Location(785);
 
    public static final Location REST = new Location(247);
    public static final Location AUTONOMOUS_SHOT = new Location(336);
@@ -53,7 +54,7 @@ public class PIDBoom{
     class BoomPIDController extends PIDSubsystem {
         
         public BoomPIDController() {
-            super("Boom", P, 0, 0);
+            super("Boom", P, 0, D);
             enable();
         }
 
