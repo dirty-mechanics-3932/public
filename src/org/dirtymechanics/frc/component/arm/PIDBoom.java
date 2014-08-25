@@ -8,22 +8,9 @@ import org.dirtymechanics.frc.sensor.RotationalEncoder;
  *
  * @author Daniel Ruess
  */
-public class PIDBoom{
-    static final double P = .018d;
-    static double D = .009; // The boom, she wants the D
+public class PIDBoom {
    PIDSubsystem pid;
-   public static Location PID_PASS = new Location(500);//GROUND;//new Location(3.26);
-   public static final Location PID_ARM_UP_LIMIT = new Location(150);//GROUND;//new Location(3.26);
-   public static final Location PID_ARM_DOWN_LIMIT = new Location(769);//GROUND;//new Location(3.26);
-   public static final Location MAX = new Location(200);
-   public static final Location MIN = new Location(769);
-
-   public static final Location REST = new Location(247);
-   public static final Location AUTONOMOUS_SHOT = new Location(336);
-   public static final Location HIGH_GOAL = new Location(336);
-   public static final Location GROUND = MIN;
-   public static final Location PASS = new Location(535);
-
+   private BoomProperties boomProperties = new CompetitionBoomProps();
     final Talon motor;
     final RotationalEncoder rot;
     public boolean BOOM_ENABLED = true;
@@ -34,12 +21,21 @@ public class PIDBoom{
         this.motor = motor;
         this.rot = rot;
         pid = new BoomPIDController();
+        
         //Boom does this in it's constructor, but without the pid 
         //  enabled that won't do anything.
 //        if (BOOM_ENABLED) {
 //            set(PASS);
 //        }
         
+    }
+
+    public BoomProperties getBoomProperties() {
+        return boomProperties;
+    }
+
+    public void setBoomProperties(BoomProperties boomProperties) {
+        this.boomProperties = boomProperties;
     }
     
      public static class Location {
@@ -54,7 +50,7 @@ public class PIDBoom{
     class BoomPIDController extends PIDSubsystem {
         
         public BoomPIDController() {
-            super("Boom", P, 0, D);
+            super("Boom", boomProperties.getP(), 0, boomProperties.getD());
             enable();
         }
 

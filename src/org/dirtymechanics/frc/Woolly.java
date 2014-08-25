@@ -10,7 +10,6 @@ import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
-import edu.wpi.first.wpilibj.tables.TableKeyNotDefinedException;
 import org.dirtymechanics.event.ButtonListener;
 import org.dirtymechanics.frc.actuator.DoubleSolenoid;
 import org.dirtymechanics.frc.component.arm.Shooter;
@@ -280,7 +279,7 @@ public class Woolly extends IterativeRobot {
 //        }
         //No point in checking boom enabled here because it will try to go
         //to position "0" by default.
-            boom.set(PIDBoom.GROUND);
+            boom.set(boom.getBoomProperties().getGround());
             
 
            
@@ -294,7 +293,7 @@ public class Woolly extends IterativeRobot {
         autoStart = System.currentTimeMillis();
         disableToggles();
         screwDrive.set(ScrewDrive.AUTONOMOUS_SHOT);
-        boom.set(PIDBoom.MAX);
+        boom.set(boom.getBoomProperties().getMax());
         transmissionSolenoid.set(true);
         cameraLEDA.set(true);
         cameraLEDB.set(true);
@@ -309,7 +308,6 @@ public class Woolly extends IterativeRobot {
         double dist = ultrasonicSensor.getRangeInInches();
 
         imageMatchConfidence = server.getNumber("HOT_CONFIDENCE", 0.0);
-        updateBasedOnSmartDash();
 
         if (octo.get() && time < 3000) {
             rollerMotor.set(Relay.Value.kForward);
@@ -324,7 +322,7 @@ public class Woolly extends IterativeRobot {
             } else {
                 roller.closeArm();
                 grabSmallSolenoid.setClosed();
-                boom.set(PIDBoom.AUTONOMOUS_SHOT);
+                boom.set(boom.getBoomProperties().getAutonomousShot());
             }
             if (imageMatchConfidence > 35 && time > 300) {
                 hot = true;
@@ -654,13 +652,13 @@ public class Woolly extends IterativeRobot {
         }
 
         if (operatorController.getRawButton(4)) {
-            boom.set(PIDBoom.HIGH_GOAL);
+            boom.set(boom.getBoomProperties().getHighGoal());
         } else if (operatorController.getRawButton(2)) {
-            boom.set(PIDBoom.PASS);
+            boom.set(boom.getBoomProperties().getPass());
         } else if (operatorController.getRawButton(1)) {
-            boom.set(PIDBoom.REST);
+            boom.set(boom.getBoomProperties().getRest());
         } else if (operatorController.getRawButton(3)) {
-            boom.set(PIDBoom.GROUND);
+            boom.set(boom.getBoomProperties().getGround());
             setToggle(smallGrabberToggle, true);
             setToggle(rollerForwardToggle, true);
             setToggle(rollerReverseToggle, false);
@@ -809,11 +807,7 @@ public class Woolly extends IterativeRobot {
         }
     }
 
-    private void updateBasedOnSmartDash() {
-        if (server.getNumber("BOOM.ROT.PID.IN") != 0) {
-            PIDBoom.PID_PASS = new PIDBoom.Location(server.getNumber("BOOM.ROT.PID.IN"));
-        }
-    }
+
     
     public void testPeriodic(){
        

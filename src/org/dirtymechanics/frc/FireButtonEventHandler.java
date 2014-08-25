@@ -101,7 +101,7 @@ public class FireButtonEventHandler implements ButtonEventHandler {
     public void prepareToFireAtAngle() {
         firingStatus = "preparing to fire at angle";
         robot.disableToggles();
-        robot.boom.set(PIDBoom.HIGH_GOAL);
+        robot.boom.set(robot.boom.getBoomProperties().getHighGoal());
         robot.grabLargeSolenoid.set(false);
         robot.grabSmallSolenoid.set(false);
     }
