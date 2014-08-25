@@ -14,9 +14,9 @@ public class PIDBoom{
    PIDSubsystem pid;
    public static Location PID_PASS = new Location(500);//GROUND;//new Location(3.26);
    public static final Location PID_ARM_UP_LIMIT = new Location(150);//GROUND;//new Location(3.26);
-   public static final Location PID_ARM_DOWN_LIMIT = new Location(780);//GROUND;//new Location(3.26);
+   public static final Location PID_ARM_DOWN_LIMIT = new Location(769);//GROUND;//new Location(3.26);
    public static final Location MAX = new Location(200);
-   public static final Location MIN = new Location(785);
+   public static final Location MIN = new Location(769);
 
    public static final Location REST = new Location(247);
    public static final Location AUTONOMOUS_SHOT = new Location(336);
@@ -65,7 +65,7 @@ public class PIDBoom{
 
        protected void usePIDOutput(double output) {
            motor.set(output);
-           System.out.println("motor.set(" + output + ") rot.pidGet()=" + rot.pidGet() + " rot.get()=" + rot.getVoltage() + " getSetpoint()=" + getSetpoint() + " getPostion()=" + getPosition());
+//           System.out.println("motor.set(" + output + ") rot.pidGet()=" + rot.pidGet() + " rot.get()=" + rot.getVoltage() + " getSetpoint()=" + getSetpoint() + " getPostion()=" + getPosition());
 
        }
 

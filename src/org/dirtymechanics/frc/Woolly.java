@@ -136,7 +136,8 @@ public class Woolly extends IterativeRobot {
     private final Solenoid firingOpen;
     private final Solenoid firingClose;
     private final DoubleSolenoid firingSolenoid;
-    final Grabber grabber;
+    final Grabber smallGrabber;
+    final Grabber largeGrabber;
     private final ScrewDrive screwDrive;
     final Shooter shooter;
     final PIDBoom boom;
@@ -235,7 +236,8 @@ public class Woolly extends IterativeRobot {
         driveTrain = new DriveTrain(leftDriveMotorA, leftDriveMotorB, rightDriveMotorA, rightDriveMotorB);
         transmission = new Transmission(transmissionSolenoid);
         roller = new Roller(rollerMotor, rollerSolenoid);
-        grabber = new Grabber(grabSmallSolenoid);
+        smallGrabber = new Grabber(grabSmallSolenoid);
+        largeGrabber = new Grabber(grabLargeSolenoid);
         screwDrive = new ScrewDrive(screwMotor, stringEncoder);
         shooter = new Shooter(screwDrive, firingSolenoid);
         boom = new PIDBoom(boomMotor, rotEncoder);
@@ -278,7 +280,7 @@ public class Woolly extends IterativeRobot {
 //        }
         //No point in checking boom enabled here because it will try to go
         //to position "0" by default.
-            boom.set(PIDBoom.PID_PASS);
+            boom.set(PIDBoom.GROUND);
             
 
            
@@ -520,6 +522,7 @@ public class Woolly extends IterativeRobot {
                 if (released[8]) {
                     toggle[8]++;
                     released[8] = false;
+                    grabLargeSolenoid.flip();
                 }
             } else {
                 released[8] = true;
@@ -529,6 +532,7 @@ public class Woolly extends IterativeRobot {
             if (operatorController.getRawButton(7)) {
                 if (released[7]) {
                     toggle[7]++;
+                    grabSmallSolenoid.flip();
                     released[7] = false;
                 }
             } else {
@@ -540,6 +544,12 @@ public class Woolly extends IterativeRobot {
                 if (released[5]) {
                     toggle[5]++;
                     released[5] = false;
+                    if (toggle[5]%2 != 0) {
+                        roller.openArm();
+                    }
+                    else {
+                        roller.closeArm();
+                    }
                 }
             } else {
                 released[5] = true;
@@ -550,6 +560,12 @@ public class Woolly extends IterativeRobot {
                 if (released[10]) {
                     toggle[10]++;
                     released[10] = false;
+                    if (toggle[10]%2 == 0) {
+                        roller.forward();
+                    }
+                    else {
+                        roller.stop();
+                    }
                 }
             } else {
                 released[10] = true;
@@ -560,6 +576,12 @@ public class Woolly extends IterativeRobot {
                 if (released[9]) {
                     toggle[9]++;
                     released[9] = false;
+                    if (toggle[9]%2 == 0){
+                        roller.reverse();
+                    }
+                    else {
+                        roller.stop();
+                    }
                 }
             } else {
                 released[9] = true;
@@ -642,6 +664,9 @@ public class Woolly extends IterativeRobot {
             setToggle(smallGrabberToggle, true);
             setToggle(rollerForwardToggle, true);
             setToggle(rollerReverseToggle, false);
+            
+            roller.forward();
+            grabSmallSolenoid.setOpen();
         }
     }
 
@@ -697,6 +722,8 @@ public class Woolly extends IterativeRobot {
                 setToggle(largeGrabberToggle, false);
                 setToggle(smallGrabberToggle, false);
                 setToggle(rollerForwardToggle, false);
+                
+                smallGrabber.close();
             }
         }
     }

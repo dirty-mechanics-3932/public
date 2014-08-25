@@ -88,7 +88,7 @@ public class FireButtonEventHandler implements ButtonEventHandler {
         if (isImmediate) {
             firingStatus = "preparing to fire";
             robot.disableToggles();
-            robot.grabber.close();
+            robot.smallGrabber.close();
             robot.grabLargeSolenoid.set(false);
             robot.grabSmallSolenoid.set(false);
             robot.roller.openArm();

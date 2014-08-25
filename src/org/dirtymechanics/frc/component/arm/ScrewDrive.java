@@ -11,11 +11,11 @@ import org.dirtymechanics.frc.util.Updatable;
  */
 public class ScrewDrive implements Updatable {
 
-    public static final Location TRUSS_SHOT = new Location(2.9);
+    public static final Location TRUSS_SHOT = new Location(2.168);
     public static final Location PASS = new Location(1.5);
-    public static final Location HIGH_GOAL = new Location(2.525); //2.55
+    public static final Location HIGH_GOAL = new Location(2.168); //2.55
     public static final Location AUTONOMOUS_SHOT = HIGH_GOAL;//new Location(2.45);
-    public static final Location RESET = new Location(.45); 
+    public static final Location RESET = new Location(0.45); //(0.577); 
     /**
      * Represents a location to move the screw drive to.
      */
@@ -92,5 +92,6 @@ public class ScrewDrive implements Updatable {
                 set(HIGH_GOAL);
             }
         }
+        System.out.println("stringEncoder = " + loc + " dest = " + dest);
     }
 }
