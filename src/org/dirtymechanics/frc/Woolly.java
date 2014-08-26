@@ -10,13 +10,18 @@ import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.dirtymechanics.event.ButtonListener;
 import org.dirtymechanics.frc.actuator.DoubleSolenoid;
+import org.dirtymechanics.frc.component.arm.BoomProperties;
+import org.dirtymechanics.frc.component.arm.CompetitionBoomProps;
 import org.dirtymechanics.frc.component.arm.Shooter;
 import org.dirtymechanics.frc.component.arm.Grabber;
 import org.dirtymechanics.frc.component.arm.PIDBoom;
 import org.dirtymechanics.frc.component.arm.Roller;
 import org.dirtymechanics.frc.component.arm.ScrewDrive;
+import org.dirtymechanics.frc.component.arm.SiblingBoomProps;
 import org.dirtymechanics.frc.component.drive.DriveTrain;
 import org.dirtymechanics.frc.component.drive.Transmission;
 import org.dirtymechanics.frc.control.ButtonMap;
@@ -183,6 +188,7 @@ public class Woolly extends IterativeRobot {
     private final int MAX_AUTO_RANGE = idealMaxAutoRange;
     private final int MIN_AUTO_RANGE = idealMinAutoRange;
     private int shotsFired = 0;
+    private SendableChooser robotPicker;
 
     public Woolly() {
         driverLeftJoy = new Joystick(1);
@@ -279,15 +285,19 @@ public class Woolly extends IterativeRobot {
 //        }
         //No point in checking boom enabled here because it will try to go
         //to position "0" by default.
-            boom.set(boom.getBoomProperties().getGround());
-            
-
-           
-
-        
+        boom.set(boom.getBoomProperties().getGround());
+        robotPicker = new SendableChooser();
+        robotPicker.addDefault("Competition Robot (Default)", new CompetitionBoomProps());
+        robotPicker.addObject("Sibling Robot", new SiblingBoomProps());
+        SmartDashboard.putData("Robot Configuration", robotPicker);
+    }
+    
+    void updateBoomSetting() {
+        boom.setBoomProperties((BoomProperties) robotPicker.getSelected());
     }
 
     public void autonomousInit() {
+        updateBoomSetting();
         idealMaxAutoRange = getIntFromServerValue("idealMaxRange", MAX_AUTO_RANGE);
         idealMinAutoRange = getIntFromServerValue("idealMinRange", MIN_AUTO_RANGE);
         autoStart = System.currentTimeMillis();
@@ -776,6 +786,7 @@ public class Woolly extends IterativeRobot {
     }
 
     public void teleopInit() {
+        updateBoomSetting();
         cameraLEDA.set(false);
         cameraLEDB.set(false);
         signalLEDA.set(false);

@@ -30,13 +30,6 @@ public class PIDBoom {
         
     }
 
-    public BoomProperties getBoomProperties() {
-        return boomProperties;
-    }
-
-    public void setBoomProperties(BoomProperties boomProperties) {
-        this.boomProperties = boomProperties;
-    }
     
      public static class Location {
 
@@ -98,5 +91,14 @@ public class PIDBoom {
     public void decreaseOffset() {
         pid.setSetpoint(pid.getSetpoint() + 10);
     }
+    
+    public BoomProperties getBoomProperties() {
+        return boomProperties;
+    }
+
+    public void setBoomProperties(BoomProperties boomProperties) {
+        this.boomProperties = boomProperties;
+    }
+
 
 }
