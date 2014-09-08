@@ -1,16 +1,17 @@
-package org.dirtymechanics.frc.component.arm;
+package org.dirtymechanics.frc.component.arm.grabber;
 
 import org.dirtymechanics.frc.actuator.DoubleSolenoid;
+import org.dirtymechanics.frc.util.Updatable;
 
 /**
  * This class represents the mechanism used to grab a ball.
  * @author Daniel Ruess
  */
-public class Grabber {
+public class GrabberArmPair implements Updatable{
 
     private final DoubleSolenoid fingers;
 
-    public Grabber(DoubleSolenoid fingers) {
+    public GrabberArmPair(DoubleSolenoid fingers) {
         this.fingers = fingers;
     }
 
@@ -21,4 +22,14 @@ public class Grabber {
     public void close() {
         fingers.set(false);
     }
+    
+    public void flip(){
+        fingers.flip();
+    }
+
+    public void update() {
+        fingers.update();
+    }
+    
+    
 }

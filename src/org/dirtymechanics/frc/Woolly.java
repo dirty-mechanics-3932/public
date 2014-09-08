@@ -17,11 +17,12 @@ import org.dirtymechanics.frc.actuator.DoubleSolenoid;
 import org.dirtymechanics.frc.component.arm.BoomProperties;
 import org.dirtymechanics.frc.component.arm.CompetitionBoomProps;
 import org.dirtymechanics.frc.component.arm.Shooter;
-import org.dirtymechanics.frc.component.arm.Grabber;
 import org.dirtymechanics.frc.component.arm.PIDBoom;
 import org.dirtymechanics.frc.component.arm.Roller;
 import org.dirtymechanics.frc.component.arm.ScrewDrive;
 import org.dirtymechanics.frc.component.arm.SiblingBoomProps;
+import org.dirtymechanics.frc.component.arm.grabber.Grabber;
+import org.dirtymechanics.frc.component.arm.grabber.WoollyGrabber;
 import org.dirtymechanics.frc.component.drive.DriveTrain;
 import org.dirtymechanics.frc.component.drive.Transmission;
 import org.dirtymechanics.frc.control.ButtonMap;
@@ -98,21 +99,9 @@ public class Woolly extends IterativeRobot {
      */
     private final Solenoid transClose;
     /**
-     * The spike controlling the open valve for the grabber.
-     */
-    private final Solenoid grabSmallOpen;
-    /**
-     * The spike controlling the close valve for the grabber.
-     */
-    private final Solenoid grabSmallClose;
-    /**
      * The solenoid to switch the transmission.
      */
     private final DoubleSolenoid transmissionSolenoid;
-    /**
-     * The solenoid controlling the grabber.
-     */
-    final DoubleSolenoid grabSmallSolenoid;
     /**
      * The string encoder used for the screw drive.
      */
@@ -140,14 +129,14 @@ public class Woolly extends IterativeRobot {
     private final Solenoid firingOpen;
     private final Solenoid firingClose;
     private final DoubleSolenoid firingSolenoid;
-    final Grabber smallGrabber;
-    final Grabber largeGrabber;
+//    final GrabberArmPair smallGrabber;
+//    final GrabberArmPair largeGrabber;
     private final ScrewDrive screwDrive;
     final Shooter shooter;
     final PIDBoom boom;
-    private final Solenoid grabLargeOpen;
-    private final Solenoid grabLargeClose;
-    final DoubleSolenoid grabLargeSolenoid;
+//    private final Solenoid grabLargeOpen;
+//    private final Solenoid grabLargeClose;
+//    final DoubleSolenoid grabLargeSolenoid;
     private final Solenoid rollerOpen;
     private final Solenoid rollerClose;
     private final Solenoid cameraLEDA;
@@ -189,6 +178,7 @@ public class Woolly extends IterativeRobot {
     private final int MIN_AUTO_RANGE = idealMinAutoRange;
     private int shotsFired = 0;
     private SendableChooser robotPicker;
+    final Grabber grabber;
 
     public Woolly() {
         driverLeftJoy = new Joystick(1);
@@ -212,13 +202,7 @@ public class Woolly extends IterativeRobot {
         transClose = new Solenoid(1, 8);
         transmissionSolenoid = new DoubleSolenoid(transOpen, transClose);
 
-        grabSmallOpen = new Solenoid(1, 1);
-        grabSmallClose = new Solenoid(1, 2);
-        grabSmallSolenoid = new DoubleSolenoid(grabSmallOpen, grabSmallClose);
-
-        grabLargeOpen = new Solenoid(1, 5);
-        grabLargeClose = new Solenoid(1, 6);
-        grabLargeSolenoid = new DoubleSolenoid(grabLargeOpen, grabLargeClose);
+        grabber = WoollyGrabber.getGrabber();
 
         firingOpen = new Solenoid(2, 1);
         firingClose = new Solenoid(2, 2);
@@ -241,8 +225,6 @@ public class Woolly extends IterativeRobot {
         driveTrain = new DriveTrain(leftDriveMotorA, leftDriveMotorB, rightDriveMotorA, rightDriveMotorB);
         transmission = new Transmission(transmissionSolenoid);
         roller = new Roller(rollerMotor, rollerSolenoid);
-        smallGrabber = new Grabber(grabSmallSolenoid);
-        largeGrabber = new Grabber(grabLargeSolenoid);
         screwDrive = new ScrewDrive(screwMotor, stringEncoder);
         shooter = new Shooter(screwDrive, firingSolenoid);
         boom = new PIDBoom(boomMotor, rotEncoder);
@@ -253,8 +235,7 @@ public class Woolly extends IterativeRobot {
 //        fireButtonListener.addListener(fireButtonHandler);
         updatables = new List();
         updatables.put(transmissionSolenoid);
-        updatables.put(grabSmallSolenoid);
-        updatables.put(grabLargeSolenoid);
+        updatables.put(grabber);
         updatables.put(firingSolenoid);
         updatables.put(rollerSolenoid);
         updatables.put(shooter);
@@ -286,18 +267,35 @@ public class Woolly extends IterativeRobot {
         //No point in checking boom enabled here because it will try to go
         //to position "0" by default.
         boom.set(boom.getBoomProperties().getGround());
+        
+        
+
         robotPicker = new SendableChooser();
-        robotPicker.addDefault("Competition Robot (Default)", new CompetitionBoomProps());
-        robotPicker.addObject("Sibling Robot", new SiblingBoomProps());
+//        robotPicker.addDefault("Competition Robot (Default)", new CompetitionBoomProps());
+//        robotPicker.addObject("Sibling Robot", new SiblingBoomProps());
+        
+        // Since we're going to be configuring a lot based on this, we
+        // need a general enumerable.
+        
+        robotPicker.addDefault("Competition Robot (Default)", RobotType.WOOLLY);
+        robotPicker.addObject("Sibling Robot", RobotType.SIBLING);
+        
         SmartDashboard.putData("Robot Configuration", robotPicker);
     }
     
-    void updateBoomSetting() {
-        boom.setBoomProperties((BoomProperties) robotPicker.getSelected());
+    void updateSettings() {
+        RobotType robotType = (RobotType) robotPicker.getSelected();
+        
+        if (robotType == RobotType.WOOLLY){
+            boom.setBoomProperties(new CompetitionBoomProps());
+        }
+        else if (robotType == RobotType.SIBLING){
+            boom.setBoomProperties(new SiblingBoomProps());
+        }
     }
 
     public void autonomousInit() {
-        updateBoomSetting();
+        updateSettings();
         idealMaxAutoRange = getIntFromServerValue("idealMaxRange", MAX_AUTO_RANGE);
         idealMinAutoRange = getIntFromServerValue("idealMinRange", MIN_AUTO_RANGE);
         autoStart = System.currentTimeMillis();
@@ -328,10 +326,12 @@ public class Woolly extends IterativeRobot {
         if (time < 4200) {
             if (time < 175) {
                 roller.openArm();
-                grabSmallSolenoid.setOpen();
+//                grabSmallSolenoid.setOpen();
+                grabber.openSmall();
             } else {
                 roller.closeArm();
-                grabSmallSolenoid.setClosed();
+//                grabSmallSolenoid.setClosed();
+                grabber.closeSmall();
                 boom.set(boom.getBoomProperties().getAutonomousShot());
             }
             if (imageMatchConfidence > 35 && time > 300) {
@@ -362,7 +362,8 @@ public class Woolly extends IterativeRobot {
             if (hot || imageMatchConfidence > 35 || time > 6000) {
                 if (!firing) {
                     roller.openArm();
-                    grabSmallSolenoid.setOpen();
+//                    grabSmallSolenoid.setOpen();
+                    grabber.openSmall();
                     firing = true;
                     fireButtonPressTime = System.currentTimeMillis();
                 }
@@ -504,7 +505,8 @@ public class Woolly extends IterativeRobot {
         if (firing) {
             if (isArmingRange()) {
                 roller.openArm();
-                grabSmallSolenoid.setOpen();
+//                grabSmallSolenoid.setOpen();
+                grabber.openSmall();
                 roller.stop();
             }
             if (isTimeToResetFireControls()) {
@@ -525,79 +527,101 @@ public class Woolly extends IterativeRobot {
         updateRangeLEDs();
 
         if (!firing) {
-            //large arm
-            if (operatorController.getRawButton(8)) {
-                if (released[8]) {
-                    toggle[8]++;
-                    released[8] = false;
-                    grabLargeSolenoid.flip();
-                }
-            } else {
-                released[8] = true;
-            }
-
-            //small arm
-            if (operatorController.getRawButton(7)) {
-                if (released[7]) {
-                    toggle[7]++;
-                    grabSmallSolenoid.flip();
-                    released[7] = false;
-                }
-            } else {
-                released[7] = true;
-            }
-
-            //roller arm
-            if (operatorController.getRawButton(5)) {
-                if (released[5]) {
-                    toggle[5]++;
-                    released[5] = false;
-                    if (toggle[5]%2 != 0) {
-                        roller.openArm();
-                    }
-                    else {
-                        roller.closeArm();
-                    }
-                }
-            } else {
-                released[5] = true;
-            }
-
-            //roller forward
-            if (operatorController.getRawButton(10)) {
-                if (released[10]) {
-                    toggle[10]++;
-                    released[10] = false;
-                    if (toggle[10]%2 == 0) {
-                        roller.forward();
-                    }
-                    else {
-                        roller.stop();
-                    }
-                }
-            } else {
-                released[10] = true;
-            }
-
-            //roller rev
-            if (operatorController.getRawButton(9)) {
-                if (released[9]) {
-                    toggle[9]++;
-                    released[9] = false;
-                    if (toggle[9]%2 == 0){
-                        roller.reverse();
-                    }
-                    else {
-                        roller.stop();
-                    }
-                }
-            } else {
-                released[9] = true;
-            }
+            checkArmControls();
 
         }
 
         update();
+    }
+
+    private void checkArmControls() {
+        checkLargeGrabberButton();
+        checkSmallGrabberButton();
+        checkRollerArmButton();
+        checkRollerForwardButton();
+        checkRollerReverseButton();
+    }
+
+    private void checkRollerReverseButton() {
+        //roller rev
+        if (operatorController.getRawButton(9)) {
+            if (released[9]) {
+                toggle[9]++;
+                released[9] = false;
+                if (toggle[9]%2 == 0){
+                    roller.reverse();
+                }
+                else {
+                    roller.stop();
+                }
+            }
+        } else {
+            released[9] = true;
+        }
+    }
+
+    private void checkRollerForwardButton() {
+        //roller forward
+        if (operatorController.getRawButton(10)) {
+            if (released[10]) {
+                toggle[10]++;
+                released[10] = false;
+                if (toggle[10]%2 == 0) {
+                    roller.forward();
+                }
+                else {
+                    roller.stop();
+                }
+            }
+        } else {
+            released[10] = true;
+        }
+    }
+
+    private void checkRollerArmButton() {
+        //roller arm
+        if (operatorController.getRawButton(5)) {
+            if (released[5]) {
+                toggle[5]++;
+                released[5] = false;
+                if (toggle[5]%2 != 0) {
+                    roller.openArm();
+                }
+                else {
+                    roller.closeArm();
+                }
+            }
+        } else {
+            released[5] = true;
+        }
+    }
+
+    private void checkSmallGrabberButton() {
+        //small arm
+        if (operatorController.getRawButton(7)) {
+            if (released[7]) {
+                toggle[7]++;
+//                grabSmallSolenoid.flip();
+                grabber.flipSmall();
+                released[7] = false;
+            }
+        } else {
+            released[7] = true;
+        }
+    }
+
+    private void checkLargeGrabberButton() {
+        //large arm
+        if (operatorController.getRawButton(8)) {
+            if (released[8]) {
+                toggle[8]++;
+                released[8] = false;
+//                grabLargeSolenoid.flip();
+                grabber.flipLarge();
+            }
+        } else {
+            released[8] = true;
+        }
     }
 
     private boolean isTimeToResetFireControls() {
@@ -663,18 +687,19 @@ public class Woolly extends IterativeRobot {
 
         if (operatorController.getRawButton(4)) {
             boom.set(boom.getBoomProperties().getHighGoal());
-        } else if (operatorController.getRawButton(2)) {
-            boom.set(boom.getBoomProperties().getPass());
         } else if (operatorController.getRawButton(1)) {
-            boom.set(boom.getBoomProperties().getRest());
+            boom.set(boom.getBoomProperties().getPass());
         } else if (operatorController.getRawButton(3)) {
+            boom.set(boom.getBoomProperties().getRest());
+        } else if (operatorController.getRawButton(2)) {
             boom.set(boom.getBoomProperties().getGround());
             setToggle(smallGrabberToggle, true);
             setToggle(rollerForwardToggle, true);
             setToggle(rollerReverseToggle, false);
             
             roller.forward();
-            grabSmallSolenoid.setOpen();
+//            grabSmallSolenoid.setOpen();
+            grabber.openSmall();
         }
     }
 
@@ -731,7 +756,8 @@ public class Woolly extends IterativeRobot {
                 setToggle(smallGrabberToggle, false);
                 setToggle(rollerForwardToggle, false);
                 
-                smallGrabber.close();
+//                smallGrabber.close();
+                grabber.closeSmall();
             }
         }
     }
@@ -786,7 +812,7 @@ public class Woolly extends IterativeRobot {
     }
 
     public void teleopInit() {
-        updateBoomSetting();
+        updateSettings();
         cameraLEDA.set(false);
         cameraLEDB.set(false);
         signalLEDA.set(false);

@@ -88,9 +88,11 @@ public class FireButtonEventHandler implements ButtonEventHandler {
         if (isImmediate) {
             firingStatus = "preparing to fire";
             robot.disableToggles();
-            robot.smallGrabber.close();
-            robot.grabLargeSolenoid.set(false);
-            robot.grabSmallSolenoid.set(false);
+//            robot.smallGrabber.close();
+            robot.grabber.closeSmall();
+//            robot.grabLargeSolenoid.set(false);
+            robot.grabber.closeLarge();
+//            robot.grabSmallSolenoid.set(false);
             robot.roller.openArm();
             robot.roller.stop();
         } else {
@@ -102,14 +104,18 @@ public class FireButtonEventHandler implements ButtonEventHandler {
         firingStatus = "preparing to fire at angle";
         robot.disableToggles();
         robot.boom.set(robot.boom.getBoomProperties().getHighGoal());
-        robot.grabLargeSolenoid.set(false);
-        robot.grabSmallSolenoid.set(false);
+//        robot.grabLargeSolenoid.set(false);
+        robot.grabber.closeLarge();
+//        robot.grabSmallSolenoid.set(false);
+        robot.grabber.closeSmall();
     }
 
     void resetFireControls() {
         firingStatus = "resetting fire controls";
-        robot.grabLargeSolenoid.set(false);
-        robot.grabSmallSolenoid.set(false);
+//        robot.grabLargeSolenoid.set(false);
+        robot.grabber.closeLarge();
+//        robot.grabSmallSolenoid.set(false);
+        robot.grabber.closeSmall();
         robot.roller.closeArm();
         robot.roller.stop();
         robot.firing = false;
