@@ -7,11 +7,11 @@ import org.dirtymechanics.frc.util.Updatable;
  * This class represents the mechanism used to grab a ball.
  * @author Daniel Ruess
  */
-public class GrabberArmPair implements Updatable{
+public class GrabberSolenoidPair implements Updatable{
 
     private final DoubleSolenoid fingers;
 
-    public GrabberArmPair(DoubleSolenoid fingers) {
+    public GrabberSolenoidPair(DoubleSolenoid fingers) {
         this.fingers = fingers;
     }
 

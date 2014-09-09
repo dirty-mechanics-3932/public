@@ -20,8 +20,10 @@ import org.dirtymechanics.frc.component.arm.Shooter;
 import org.dirtymechanics.frc.component.arm.PIDBoom;
 import org.dirtymechanics.frc.component.arm.Roller;
 import org.dirtymechanics.frc.component.arm.ScrewDrive;
+import org.dirtymechanics.frc.component.arm.SiblingBoom;
 import org.dirtymechanics.frc.component.arm.SiblingBoomProps;
 import org.dirtymechanics.frc.component.arm.grabber.Grabber;
+import org.dirtymechanics.frc.component.arm.grabber.SiblingGrabber;
 import org.dirtymechanics.frc.component.arm.grabber.WoollyGrabber;
 import org.dirtymechanics.frc.component.drive.DriveTrain;
 import org.dirtymechanics.frc.component.drive.Transmission;
@@ -45,106 +47,111 @@ public class Woolly extends IterativeRobot {
     /**
      * The physical left joystick.
      */
-    private final Joystick driverLeftJoy;
+    private final Joystick driverLeftJoy = new Joystick(1);
     /**
      * The physical right joystick.
      */
-    private final Joystick driverRightJoy;
+    private final Joystick driverRightJoy = new Joystick(2);
     /**
      * The operator's controller.
      */
-    final Joystick operatorController;
+    final Joystick operatorController = new Joystick(3);
     /**
      * The operator's joystick.
      */
-    private final Joystick operatorJoy;
+    private final Joystick operatorJoy = new Joystick(4);
     /**
      * The compressor's controller.
      */
-    private final Compressor compressor;
+    private final Compressor compressor = new Compressor(1, 1);
     /**
      * Jaguar that's driving the first left motor.
      */
-    private final Jaguar leftDriveMotorA;
+    private final Jaguar leftDriveMotorA = new Jaguar(1);
     /**
      * Jaguar that's driving the second left motor.
      */
-    private final Jaguar leftDriveMotorB;
+    private final Jaguar leftDriveMotorB = new Jaguar(2);
     /**
      * Jaguar that's driving the first right motor.
      */
-    private final Jaguar rightDriveMotorA;
+    private final Jaguar rightDriveMotorA = new Jaguar(3);
     /**
      * Jaguar that's driving the second right motor.
      */
-    private final Jaguar rightDriveMotorB;
+    private final Jaguar rightDriveMotorB = new Jaguar(4);
     /**
      * Jaguar controlling the screw drive.
      */
-    private final Jaguar screwMotor;
+    private final Jaguar screwMotor = new Jaguar(6);
     /**
      * Jaguar controlling the boom.
      */
-    private final Talon boomMotor;
+    private final Talon boomMotor = new Talon(5);
     /**
      * Jaguar controller the grabber's roller.
      */
-    private final Relay rollerMotor;
+    private final Relay rollerMotor = new Relay(2);
     /**
      * The spike controlling the transmission open valve.
      */
-    private final Solenoid transOpen;
+    private final Solenoid transOpen = new Solenoid(1, 7);
     /**
      * The spike controlling the transmission close valve.
      */
-    private final Solenoid transClose;
+    private final Solenoid transClose = new Solenoid(1, 8);;
     /**
      * The solenoid to switch the transmission.
      */
-    private final DoubleSolenoid transmissionSolenoid;
+    private final DoubleSolenoid transmissionSolenoid = new DoubleSolenoid(transOpen, transClose);
     /**
      * The string encoder used for the screw drive.
      */
-    private final StringEncoder stringEncoder;
+    private final StringEncoder stringEncoder = new StringEncoder(1);
     /**
      * The rotational encoder used for the boom.
      */
-    private final RotationalEncoder rotEncoder;
-    final MaxBotixMaxSonarEZ4 ultrasonicSensor;
+    private final RotationalEncoder rotEncoder = new RotationalEncoder(2);
+    final MaxBotixMaxSonarEZ4 ultrasonicSensor = new MaxBotixMaxSonarEZ4(3);
 
-    private final DigitalInput octo;
+    private final DigitalInput octo = new DigitalInput(2);
     /**
      * The button map used for controllers.
      */
-    private final ButtonMap buttonMap;
+    private final ButtonMap buttonMap = new ButtonMap(driverLeftJoy, driverRightJoy, operatorController);
     /**
      * The object controlling the drive train.
      */
-    private final DriveTrain driveTrain;
+    private final DriveTrain driveTrain = new DriveTrain(leftDriveMotorA, leftDriveMotorB, rightDriveMotorA, rightDriveMotorB);
     /**
      * List of all the updatable objects.
      */
-    private final List updatables;
-    final Roller roller;
-    private final Solenoid firingOpen;
-    private final Solenoid firingClose;
-    private final DoubleSolenoid firingSolenoid;
+    private List updatables = new List();
+
+    private final Solenoid firingOpen = new Solenoid(2, 1);
+    private final Solenoid firingClose = new Solenoid(2, 2);
+    private final DoubleSolenoid firingSolenoid = new DoubleSolenoid(firingOpen, firingClose);
 //    final GrabberArmPair smallGrabber;
 //    final GrabberArmPair largeGrabber;
-    private final ScrewDrive screwDrive;
-    final Shooter shooter;
-    final PIDBoom boom;
+    private final ScrewDrive screwDrive = new ScrewDrive(screwMotor, stringEncoder);
+    private Solenoid rollerOpen = new Solenoid(1, 3);
+    private Solenoid rollerClose = new Solenoid(1, 4);
+    private DoubleSolenoid rollerSolenoid = new DoubleSolenoid(rollerOpen, rollerClose);
+    Roller roller = new Roller(rollerMotor, rollerSolenoid);
+    Grabber grabber;
+    Shooter shooter;
+    PIDBoom boom;
 //    private final Solenoid grabLargeOpen;
 //    private final Solenoid grabLargeClose;
 //    final DoubleSolenoid grabLargeSolenoid;
-    private final Solenoid rollerOpen;
-    private final Solenoid rollerClose;
-    private final Solenoid cameraLEDA;
-    private final Solenoid cameraLEDB;
-    private final Solenoid signalLEDA;
-    private final Solenoid signalLEDB;
-    private final DoubleSolenoid rollerSolenoid;
-    private final Transmission transmission;
+    
+    
+    private final Solenoid cameraLEDA = new Solenoid(2, 7);
+    private final Solenoid cameraLEDB = new Solenoid(2, 8);
+    private final Solenoid signalLEDA = new Solenoid(2, 5);
+    private final Solenoid signalLEDB = new Solenoid(2, 6);
+
+    private final Transmission transmission = new Transmission(transmissionSolenoid);
     boolean firing;
     private long fireButtonPressTime;
     long actualFireTime;
@@ -161,7 +168,7 @@ public class Woolly extends IterativeRobot {
     private long autoStart;
 
     private static final int TRUSS_SHOT_BUTTON = 4;
-    boolean fired;
+    //boolean fired;
     String firingStatus = "";
     FireButtonEventHandler fireButtonHandler;
     ButtonListener fireButtonListener;
@@ -177,72 +184,11 @@ public class Woolly extends IterativeRobot {
     private final int MAX_AUTO_RANGE = idealMaxAutoRange;
     private final int MIN_AUTO_RANGE = idealMinAutoRange;
     private int shotsFired = 0;
+    
     private SendableChooser robotPicker;
-    final Grabber grabber;
+    
 
     public Woolly() {
-        driverLeftJoy = new Joystick(1);
-        driverRightJoy = new Joystick(2);
-        operatorController = new Joystick(3);
-        operatorJoy = new Joystick(4);
-
-        buttonMap = new ButtonMap(driverLeftJoy, driverRightJoy, operatorController);
-
-        compressor = new Compressor(1, 1);
-
-        leftDriveMotorA = new Jaguar(1);
-        leftDriveMotorB = new Jaguar(2);
-        rightDriveMotorB = new Jaguar(3);
-        rightDriveMotorA = new Jaguar(4);
-        boomMotor = new Talon(5);
-        screwMotor = new Jaguar(6);
-        rollerMotor = new Relay(2);
-
-        transOpen = new Solenoid(1, 7);
-        transClose = new Solenoid(1, 8);
-        transmissionSolenoid = new DoubleSolenoid(transOpen, transClose);
-
-        grabber = WoollyGrabber.getGrabber();
-
-        firingOpen = new Solenoid(2, 1);
-        firingClose = new Solenoid(2, 2);
-        firingSolenoid = new DoubleSolenoid(firingOpen, firingClose);
-
-        rollerOpen = new Solenoid(1, 3);
-        rollerClose = new Solenoid(1, 4);
-        rollerSolenoid = new DoubleSolenoid(rollerOpen, rollerClose);
-
-        cameraLEDA = new Solenoid(2, 7);
-        cameraLEDB = new Solenoid(2, 8);
-        signalLEDA = new Solenoid(2, 5);
-        signalLEDB = new Solenoid(2, 6);
-
-        stringEncoder = new StringEncoder(1);
-        rotEncoder = new RotationalEncoder(2);
-        ultrasonicSensor = new MaxBotixMaxSonarEZ4(3);
-        octo = new DigitalInput(2);
-
-        driveTrain = new DriveTrain(leftDriveMotorA, leftDriveMotorB, rightDriveMotorA, rightDriveMotorB);
-        transmission = new Transmission(transmissionSolenoid);
-        roller = new Roller(rollerMotor, rollerSolenoid);
-        screwDrive = new ScrewDrive(screwMotor, stringEncoder);
-        shooter = new Shooter(screwDrive, firingSolenoid);
-        boom = new PIDBoom(boomMotor, rotEncoder);
-        
-
-//        fireButtonListener = new ButtonListener();
-//        fireButtonHandler = new FireButtonEventHandler(operatorController, this);
-//        fireButtonListener.addListener(fireButtonHandler);
-        updatables = new List();
-        updatables.put(transmissionSolenoid);
-        updatables.put(grabber);
-        updatables.put(firingSolenoid);
-        updatables.put(rollerSolenoid);
-        updatables.put(shooter);
-        //updatables.put(boom);
-        updatables.put(screwDrive);
-        updatables.put(driveTrain);
-        
     }
 
     /**
@@ -266,7 +212,7 @@ public class Woolly extends IterativeRobot {
 //        }
         //No point in checking boom enabled here because it will try to go
         //to position "0" by default.
-        boom.set(boom.getBoomProperties().getGround());
+//        boom.set(boom.getBoomProperties().getGround());
         
         
 
@@ -281,21 +227,38 @@ public class Woolly extends IterativeRobot {
         robotPicker.addObject("Sibling Robot", RobotType.SIBLING);
         
         SmartDashboard.putData("Robot Configuration", robotPicker);
+        
+        updateSettings();
+        
+        updatables = new List();
+        updatables.put(transmissionSolenoid);
+        updatables.put(grabber);
+        updatables.put(firingSolenoid);
+        updatables.put(rollerSolenoid);
+        updatables.put(shooter);
+        //updatables.put(boom);
+        updatables.put(screwDrive);
+        updatables.put(driveTrain);
     }
     
     void updateSettings() {
         RobotType robotType = (RobotType) robotPicker.getSelected();
-        
+        selectRobot(robotType);        
+    }
+
+    private void selectRobot(RobotType robotType) {
         if (robotType == RobotType.WOOLLY){
-            boom.setBoomProperties(new CompetitionBoomProps());
+            boom = new PIDBoom(boomMotor, rotEncoder);
+            grabber = new WoollyGrabber();
         }
         else if (robotType == RobotType.SIBLING){
-            boom.setBoomProperties(new SiblingBoomProps());
+            boom = new SiblingBoom(boomMotor, rotEncoder);
+            grabber = new SiblingGrabber();
         }
+        shooter = new Shooter(screwDrive, firingSolenoid, grabber, roller);
     }
 
     public void autonomousInit() {
-        updateSettings();
         idealMaxAutoRange = getIntFromServerValue("idealMaxRange", MAX_AUTO_RANGE);
         idealMinAutoRange = getIntFromServerValue("idealMinRange", MIN_AUTO_RANGE);
         autoStart = System.currentTimeMillis();
@@ -502,34 +465,34 @@ public class Woolly extends IterativeRobot {
         setTransmission(buttonMap.isTransmissionHigh());
         updateOcto();
 
-        if (firing) {
-            if (isArmingRange()) {
-                roller.openArm();
-//                grabSmallSolenoid.setOpen();
-                grabber.openSmall();
-                roller.stop();
-            }
-            if (isTimeToResetFireControls()) {
-                fireButtonHandler.resetFireControls();
-            } else if (isFireDelayExpired()) {
-                fireButtonHandler.fire(isCorrectRange());
-
-            } else {
-                fireButtonHandler.prepareToFire();
-            }
-//            if (!isFireButtonPressed()) {
-//                resetFireControls();
+//        if (firing) {
+//            if (isArmingRange()) {
+//                roller.openArm();
+////                grabSmallSolenoid.setOpen();
+//                grabber.openSmall();
+//                roller.stop();
 //            }
-        }
+//            if (isTimeToResetFireControls()) {
+//                fireButtonHandler.resetFireControls();
+//            } else if (isFireDelayExpired()) {
+//                fireButtonHandler.fire(isCorrectRange());
+//
+//            } else {
+//                fireButtonHandler.prepareToFire();
+//            }
+////            if (!isFireButtonPressed()) {
+////                resetFireControls();
+////            }
+//        }
 
         updateScrewDrive();
         updateBoom();
         updateRangeLEDs();
 
-        if (!firing) {
+//        if (!firing) {
             checkArmControls();
 
-        }
+//        }
 
         update();
     }
@@ -549,10 +512,12 @@ public class Woolly extends IterativeRobot {
                 toggle[9]++;
                 released[9] = false;
                 if (toggle[9]%2 == 0){
+                    server.putString("Wooly.roller", "Reverse");
                     roller.reverse();
                 }
                 else {
                     roller.stop();
+                    server.putString("Wooly.roller", "Stop");
                 }
             }
         } else {
@@ -568,8 +533,10 @@ public class Woolly extends IterativeRobot {
                 released[10] = false;
                 if (toggle[10]%2 == 0) {
                     roller.forward();
+                    server.putString("Wooly.roller", "Forward");
                 }
                 else {
+                    server.putString("Wooly.roller", "Stop");
                     roller.stop();
                 }
             }
@@ -579,20 +546,24 @@ public class Woolly extends IterativeRobot {
     }
 
     private void checkRollerArmButton() {
+        final boolean rollerArmButtonPressed = operatorController.getRawButton(5);
         //roller arm
-        if (operatorController.getRawButton(5)) {
+        if (rollerArmButtonPressed) {
             if (released[5]) {
                 toggle[5]++;
                 released[5] = false;
                 if (toggle[5]%2 != 0) {
+                    server.putString("Wooly.rollerArm", "Open");
                     roller.openArm();
                 }
                 else {
+                    server.putString("Wooly.rollerArm", "Close");
                     roller.closeArm();
                 }
             }
         } else {
             released[5] = true;
+            toggle[5]++;
         }
     }
 
@@ -624,15 +595,15 @@ public class Woolly extends IterativeRobot {
         }
     }
 
-    private boolean isTimeToResetFireControls() {
-        final boolean resetDelayExpired = System.currentTimeMillis() - actualFireTime > 250;
-        return resetDelayExpired && fired;
-    }
-
-
-    private boolean isFireDelayExpired() {
-        return System.currentTimeMillis() - fireButtonPressTime > 350;
-    }
+//    private boolean isTimeToResetFireControls() {
+//        final boolean resetDelayExpired = System.currentTimeMillis() - actualFireTime > 250;
+//        return resetDelayExpired && fired;
+//    }
+//
+//
+//    private boolean isFireDelayExpired() {
+//        return System.currentTimeMillis() - fireButtonPressTime > 350;
+//    }
 
     private boolean isArmingRange() {
         return ultrasonicSensor.getRangeInInches() > 100 && ultrasonicSensor.getRangeInInches() < 115;
@@ -812,7 +783,7 @@ public class Woolly extends IterativeRobot {
     }
 
     public void teleopInit() {
-        updateSettings();
+        boom.set(boom.getBoomProperties().getGround());
         cameraLEDA.set(false);
         cameraLEDB.set(false);
         signalLEDA.set(false);
@@ -826,14 +797,14 @@ public class Woolly extends IterativeRobot {
         signalLEDB.set(b);
     }
 
-    private void logFiringTelemetry() {
-        final String logMessage = System.currentTimeMillis() + " Range="
-                + ultrasonicSensor.getRangeInInches() + ", Rot.v=" + rotEncoder.getAverageVoltage() + ", Str.volt="
-                + stringEncoder.getAverageVoltage() + ", leftA=" + leftDriveMotorA.getSpeed()
-                + ", rightA=" + rightDriveMotorA.getSpeed();
-        System.out.println(logMessage);
-        server.putString(++shotsFired + "shot", logMessage);
-    }
+//    private void logFiringTelemetry() {
+//        final String logMessage = System.currentTimeMillis() + " Range="
+//                + ultrasonicSensor.getRangeInInches() + ", Rot.v=" + rotEncoder.getAverageVoltage() + ", Str.volt="
+//                + stringEncoder.getAverageVoltage() + ", leftA=" + leftDriveMotorA.getSpeed()
+//                + ", rightA=" + rightDriveMotorA.getSpeed();
+//        System.out.println(logMessage);
+//        server.putString(++shotsFired + "shot", logMessage);
+//    }
 
     int getIntFromServerValue(String tableKey, int defaultValue) {
         try {

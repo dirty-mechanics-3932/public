@@ -14,9 +14,15 @@ import org.dirtymechanics.frc.util.Updatable;
  * Implements Woolly's grabber mechanism (i.e. the side arms).
  * @author Zach Sussman
  */
-public class WoollyGrabber extends Grabber implements Updatable{
-    private final GrabberArmPair smallArm;
-    private final GrabberArmPair largeArm;
+public class WoollyGrabber implements Grabber, Updatable{
+    /**
+    Small solenoids extend arms out to slightly open
+    */
+    private final GrabberSolenoidPair smallSolenoids;
+    /**
+     * Large solenoids open arms out to fully open position
+     */
+    private final GrabberSolenoidPair largeSolenoids;
    
     
     public static final int SMALL_MODULE = 1;
@@ -27,53 +33,51 @@ public class WoollyGrabber extends Grabber implements Updatable{
     public static final int LARGE_CLOSE_PORT = 5;
     public static final int LARGE_OPEN_PORT = 6;
     
-    public WoollyGrabber(GrabberArmPair small, GrabberArmPair large){
-        smallArm = small;
-        largeArm = large;
+    public WoollyGrabber(GrabberSolenoidPair small, GrabberSolenoidPair large){
+        smallSolenoids = small;
+        largeSolenoids = large;
     }
 
     public void openSmall() {
-        smallArm.open();
+        smallSolenoids.open();
     }
 
     public void closeSmall() {
-        smallArm.close();
+        smallSolenoids.close();
     }
     
     public void flipSmall() {
-        smallArm.flip();
+        smallSolenoids.flip();
     }
 
     public void openLarge() {
-        largeArm.open();
+        largeSolenoids.open();
     }
 
     public void closeLarge() {
-        largeArm.close();
+        largeSolenoids.close();
     }
     
     public void flipLarge() {
-        largeArm.flip();
+        largeSolenoids.flip();
     }
     
-    public static Grabber getGrabber(){
+    public WoollyGrabber(){
         Solenoid grabSmallOpen = new Solenoid(1, 1);
         Solenoid grabSmallClose = new Solenoid(1, 2);
         DoubleSolenoid grabSmallSolenoid = new DoubleSolenoid(grabSmallOpen, grabSmallClose);
-        GrabberArmPair smallArm = new GrabberArmPair(grabSmallSolenoid);
+        smallSolenoids = new GrabberSolenoidPair(grabSmallSolenoid);
         
         Solenoid grabLargeOpen = new Solenoid(1, 5);
         Solenoid grabLargeClose = new Solenoid(1, 6);
         DoubleSolenoid grabLargeSolenoid = new DoubleSolenoid(grabLargeOpen, grabLargeClose);
-        GrabberArmPair largeArm = new GrabberArmPair(grabLargeSolenoid);
-        
-        return new WoollyGrabber(smallArm, largeArm);
+        largeSolenoids = new GrabberSolenoidPair(grabLargeSolenoid);
         
     }
 
     public void update() {
-        largeArm.update();
-        smallArm.update();
+        largeSolenoids.update();
+        smallSolenoids.update();
     }
     
 }

@@ -12,5 +12,8 @@ package org.dirtymechanics.frc.component.arm;
  */
 public class SiblingBoomProps extends CompetitionBoomProps {
     //For now sibling and Competition are the same.  Place overrides here.
-       
+    
+    public int getMoveIncrementSize(){
+        return -10;
+    }
 }

@@ -9,8 +9,8 @@ import org.dirtymechanics.frc.sensor.RotationalEncoder;
  * @author Daniel Ruess
  */
 public class PIDBoom {
-   PIDSubsystem pid;
-   private BoomProperties boomProperties = new CompetitionBoomProps();
+    PIDSubsystem pid;
+    private BoomProperties boomProperties = new CompetitionBoomProps();
     final Talon motor;
     final RotationalEncoder rot;
     public boolean BOOM_ENABLED = true;
@@ -62,7 +62,7 @@ public class PIDBoom {
        }
     }
 
-    public final void set(Location dest) {
+    public void set(Location dest) {
        pid.setSetpoint(dest.loc);
 //        pid.setSetpoint(PID_PASS.loc);
     }
@@ -85,11 +85,11 @@ public class PIDBoom {
     }
     
     public void increaseOffset() {
-        pid.setSetpoint(pid.getSetpoint() - 10);
+        pid.setSetpoint(pid.getSetpoint() - boomProperties.getMoveIncrementSize());
     }
 
     public void decreaseOffset() {
-        pid.setSetpoint(pid.getSetpoint() + 10);
+        pid.setSetpoint(pid.getSetpoint() + boomProperties.getMoveIncrementSize());
     }
     
     public BoomProperties getBoomProperties() {

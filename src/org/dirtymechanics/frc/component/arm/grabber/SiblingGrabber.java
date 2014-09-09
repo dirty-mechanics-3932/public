@@ -6,39 +6,59 @@
 
 package org.dirtymechanics.frc.component.arm.grabber;
 
+import edu.wpi.first.wpilibj.Solenoid;
+import org.dirtymechanics.frc.actuator.DoubleSolenoid;
+import org.dirtymechanics.frc.util.Updatable;
+
 /**
  *
  * @author frc
  */
-public class SiblingGrabber extends Grabber {
-    private GrabberArmPair grabberArm;
+public class SiblingGrabber implements Grabber, Updatable{
+    /**
+     * grabberSolenoids opens the arms
+     */
+    private GrabberSolenoidPair grabberSolenoids;
     
-    public SiblingGrabber(GrabberArmPair arm){
-        grabberArm = arm;
+    public SiblingGrabber(GrabberSolenoidPair arm){
+        grabberSolenoids = arm;
+    }
+    
+    public SiblingGrabber(){
+        Solenoid grabOpen = new Solenoid(1, 1);
+        Solenoid grabClose = new Solenoid(1, 2);
+        DoubleSolenoid grabSolenoid = new DoubleSolenoid(grabOpen, grabClose);
+        grabberSolenoids = new GrabberSolenoidPair(grabSolenoid);
     }
     
     public void openSmall(){
-        grabberArm.open();
+        grabberSolenoids.open();
     }
     
     public void closeSmall(){
-        grabberArm.close();
+        grabberSolenoids.close();
     }
     
     public void flipSmall(){
-        grabberArm.flip();
+        grabberSolenoids.flip();
     }
     
     public void openLarge(){
-        grabberArm.open();
+        grabberSolenoids.open();
     }
     
     public void closeLarge(){
-        grabberArm.close();
+        grabberSolenoids.close();
     }
     
     public void flipLarge(){
-        grabberArm.flip();
+        grabberSolenoids.flip();
     }
+
+    public void update() {
+        grabberSolenoids.update();
+    }
+    
+    
     
 }

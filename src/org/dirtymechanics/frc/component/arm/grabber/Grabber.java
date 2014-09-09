@@ -11,7 +11,8 @@ package org.dirtymechanics.frc.component.arm.grabber;
  * 
  * @author Zach Sussman
  */
-public abstract class Grabber {
+public interface Grabber {
+    
     public abstract void openSmall();
     public abstract void closeSmall();
     public abstract void flipSmall();
@@ -19,10 +20,5 @@ public abstract class Grabber {
     public abstract void openLarge();
     public abstract void closeLarge();
     public abstract void flipLarge();
-    
-    public static Grabber getGrabber() throws Exception {
-        throw new Exception("Grabber is too abstract; choose a concrete class");
-    }
-    
     
 }

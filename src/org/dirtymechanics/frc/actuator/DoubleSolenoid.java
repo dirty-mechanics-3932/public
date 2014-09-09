@@ -14,7 +14,7 @@ public class DoubleSolenoid implements Updatable {
     /**
      * The time to wait after firing to disable the open valve.
      */
-    private static final int FIRE_WAIT = 500;
+    private static final int FIRE_WAIT = 1000;
 
     /**
      * The spike controlling the opening of the valve.

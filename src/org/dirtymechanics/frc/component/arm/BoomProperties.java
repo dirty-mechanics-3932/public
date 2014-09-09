@@ -72,4 +72,6 @@ public interface BoomProperties {
      */
     PIDBoom.Location getRest();
     
+    
+    int getMoveIncrementSize();
 }

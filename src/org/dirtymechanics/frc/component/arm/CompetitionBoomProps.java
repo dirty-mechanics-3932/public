@@ -25,6 +25,7 @@ public class CompetitionBoomProps implements BoomProperties {
    PIDBoom.Location highGoal = new PIDBoom.Location(336);
    PIDBoom.Location ground = min;
    PIDBoom.Location pass = new PIDBoom.Location(535);
+   int moveIncrementSize = 10;
 
     public double getP() {
         return P;
@@ -72,6 +73,10 @@ public class CompetitionBoomProps implements BoomProperties {
 
     public PIDBoom.Location getPass() {
         return pass;
+    }
+    
+    public int getMoveIncrementSize() {
+        return moveIncrementSize;
     }
 
     

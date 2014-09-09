@@ -19,7 +19,7 @@ import java.util.Vector;
  * in the target java version - 1.4
  */
 public class ButtonListener {
-    public static final int PRESS_MILLIS = 200;
+    public static final int PRESS_MILLIS = 500;
     public static final int NEUTRAL = 0;
     public static final int PRESS = 1;
     public static final int SINGLE_CLICK = 2;
