@@ -25,10 +25,6 @@ public class DoubleSolenoid implements Updatable {
      */
     private final Solenoid closeSpike;
     /**
-     * The time to wait between inputs.
-     */
-    private final int debounce;
-    /**
      * The state of the solenoid.
      */
     private boolean state;
@@ -49,7 +45,7 @@ public class DoubleSolenoid implements Updatable {
      * @param closeSpike The spike controlling the close valve.
      */
     public DoubleSolenoid(Solenoid openSpike, Solenoid closeSpike) {
-        this(openSpike, closeSpike, 1000, false);
+        this(openSpike, closeSpike, false);
     }
 
     /**
@@ -57,13 +53,11 @@ public class DoubleSolenoid implements Updatable {
      *
      * @param openSpike The spike controlling the open valve.
      * @param closeSpike The spike controlling the close valve.
-     * @param debounce The debounce time.
      * @param initialState The initial state to start in.
      */
-    public DoubleSolenoid(Solenoid openSpike, Solenoid closeSpike, int debounce, boolean initialState) {
+    public DoubleSolenoid(Solenoid openSpike, Solenoid closeSpike, boolean initialState) {
         this.openSpike = openSpike;
         this.closeSpike = closeSpike;
-        this.debounce = debounce;
         this.state = initialState;
     }
 
@@ -105,26 +99,5 @@ public class DoubleSolenoid implements Updatable {
             openSpike.set(false);
             closeSpike.set(true);
         }
-        if (true) {
-            return;
-        }
-        if (stateChanged) {
-            lastStateChange = System.currentTimeMillis();
-            stateChanged = false;
-        } else {
-            if (System.currentTimeMillis() - lastStateChange < FIRE_WAIT) {
-                if (state) {
-                    openSpike.set(true);
-                    closeSpike.set(false);
-                } else {
-                    openSpike.set(false);
-                    closeSpike.set(true);
-                }
-            } else {
-                openSpike.set(false);
-                closeSpike.set(false);
-            }
-        }
-
     }
 }

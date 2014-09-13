@@ -210,18 +210,11 @@ public class Woolly extends IterativeRobot {
         server.putNumber("idealMaxRange", idealMaxAutoRange);
         server.putNumber("idealMinRange", idealMinAutoRange);
         server.putNumber("BOOM.ROT.PID.IN", 0d);
-//        if (boom.BOOM_ENABLED) {
-//            boom.set(Boom.HIGH_GOAL);
-//        }
-        //No point in checking boom enabled here because it will try to go
-        //to position "0" by default.
-//        boom.set(boom.getBoomProperties().getGround());
+
         
         
 
         robotPicker = new SendableChooser();
-//        robotPicker.addDefault("Competition Robot (Default)", new CompetitionBoomProps());
-//        robotPicker.addObject("Sibling Robot", new SiblingBoomProps());
         
         // Since we're going to be configuring a lot based on this, we
         // need a general enumerable.
@@ -239,7 +232,6 @@ public class Woolly extends IterativeRobot {
         updatables.put(firingSolenoid);
         updatables.put(rollerSolenoid);
         updatables.put(shooter);
-        //updatables.put(boom);
         updatables.put(screwDrive);
         updatables.put(driveTrain);
     }
