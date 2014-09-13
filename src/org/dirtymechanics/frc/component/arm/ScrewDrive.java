@@ -37,6 +37,7 @@ public class ScrewDrive implements Updatable {
     private double dest;
     private int speedScale = 0;
 
+    //TODO introduce the OperatorController and OperatorJoy and shuffle all that code here.
     public ScrewDrive(Jaguar motor, StringEncoder string) {
         this.motor = motor;
         this.string = string;
@@ -68,6 +69,10 @@ public class ScrewDrive implements Updatable {
     }
 
     public void update() {
+        seekSetPoint();
+    }
+
+    void seekSetPoint() {
         double loc = string.getAverageVoltage();
         double dif = Math.abs(dest - loc);
         double error = .01;

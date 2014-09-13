@@ -1,19 +1,15 @@
 package org.dirtymechanics.frc.control;
 
-import edu.wpi.first.wpilibj.Joystick;
 
-/**
- *
- * @author Daniel Ruess
- */
+
 public class ButtonMap {
 
     private double leftSpeed = 0;
     private double rightSpeed = 0;
 
-    private final Joystick left;
-    private final Joystick right;
-    private final Joystick cont;
+    private final BasicJoystick left;
+    private final BasicJoystick right;
+    private final GameController cont;
 
     private boolean transmissionState = false;
     private boolean transmissionLast = false;
@@ -21,7 +17,7 @@ public class ButtonMap {
 
     private int mode = 0;
 
-    public ButtonMap(Joystick left, Joystick right, Joystick cont) {
+    public ButtonMap(BasicJoystick left, BasicJoystick right, GameController cont) {
         this.left = left;
         this.right = right;
         this.cont = cont;

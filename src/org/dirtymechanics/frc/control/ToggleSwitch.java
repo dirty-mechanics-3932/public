@@ -1,9 +1,5 @@
 package org.dirtymechanics.frc.control;
 
-/**
- *
- * @author Daniel Ruess
- */
 public class ToggleSwitch {
 
     private boolean released = true;

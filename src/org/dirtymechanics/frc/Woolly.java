@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Jaguar;
-import edu.wpi.first.wpilibj.Joystick;
+
 import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Talon;
@@ -27,7 +27,10 @@ import org.dirtymechanics.frc.component.arm.grabber.SiblingGrabber;
 import org.dirtymechanics.frc.component.arm.grabber.WoollyGrabber;
 import org.dirtymechanics.frc.component.drive.DriveTrain;
 import org.dirtymechanics.frc.component.drive.Transmission;
+import org.dirtymechanics.frc.control.BasicJoystick;
 import org.dirtymechanics.frc.control.ButtonMap;
+import org.dirtymechanics.frc.control.GameController;
+import org.dirtymechanics.frc.control.Joystick;
 import org.dirtymechanics.frc.sensor.MaxBotixMaxSonarEZ4;
 import org.dirtymechanics.frc.sensor.PIDDistanceDrive;
 import org.dirtymechanics.frc.sensor.RotationalEncoder;
@@ -47,22 +50,22 @@ public class Woolly extends IterativeRobot {
     /**
      * The physical left joystick.
      */
-    private final Joystick driverLeftJoy = new Joystick(DRIVER_LEFT_JOY_USB_PORT);
+    private final BasicJoystick driverLeftJoy = new Joystick(DRIVER_LEFT_JOY_USB_PORT);
     public static final int DRIVER_LEFT_JOY_USB_PORT = 1;
     /**
      * The physical right joystick.
      */
-    private final Joystick driverRightJoy = new Joystick(DRIVER_RIGHT_JOY_USB_PORT);
+    private final BasicJoystick driverRightJoy = new Joystick(DRIVER_RIGHT_JOY_USB_PORT);
     public static final int DRIVER_RIGHT_JOY_USB_PORT = 2;
     /**
      * The operator's controller.
      */
-    final Joystick operatorController = new Joystick(OPERATOR_CONTROLLER_USB_PORT);
+    final GameController operatorController = new Joystick(OPERATOR_CONTROLLER_USB_PORT);
     public static final int OPERATOR_CONTROLLER_USB_PORT = 3;
     /**
      * The operator's joystick.
      */
-    private final Joystick operatorJoy = new Joystick(OPERATOR_JOY_USB_PORT);
+    private final BasicJoystick operatorJoy = new Joystick(OPERATOR_JOY_USB_PORT);
     public static final int OPERATOR_JOY_USB_PORT = 4;
     /**
      * The compressor's controller.

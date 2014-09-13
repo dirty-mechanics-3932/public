@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import org.dirtymechanics.event.ButtonEventHandler;
 import org.dirtymechanics.event.ButtonListener;
 import org.dirtymechanics.frc.component.arm.PIDBoom;
+import org.dirtymechanics.frc.control.GameController;
 
 
 /**
@@ -19,7 +20,7 @@ import org.dirtymechanics.frc.component.arm.PIDBoom;
  * When a button hold event is triggered lockon shoot.
  */
 public class FireButtonEventHandler implements ButtonEventHandler {
-    private Joystick controller;
+    private GameController controller;
     private Woolly robot;
     boolean isImmediate;
     
@@ -31,7 +32,7 @@ public class FireButtonEventHandler implements ButtonEventHandler {
     //  common into some middle ground.  Need the operatorController to
     //  check on the "safety" button.  Need the robot to call all the things
     //  to do to shoot.
-    public FireButtonEventHandler(Joystick operatorController, Woolly robot) {
+    public FireButtonEventHandler(GameController operatorController, Woolly robot) {
         this.controller = operatorController;
         this.robot = robot;
     }
@@ -87,43 +88,6 @@ public class FireButtonEventHandler implements ButtonEventHandler {
             System.out.println("did NOT fire at range " + robot.ultrasonicSensor.getRangeInInches() + "isImmediate=" + isImmediate + " isCorrectRange=" + isCorrectRange);
         }
     }
-    
-//    public void prepareToFire() {
-//        if (isImmediate) {
-//            firingStatus = "preparing to fire";
-//            robot.disableToggles();
-////            robot.smallGrabber.close();
-//            robot.grabber.closeSmall();
-////            robot.grabLargeSolenoid.set(false);
-//            robot.grabber.closeLarge();
-////            robot.grabSmallSolenoid.set(false);
-//            robot.roller.openArm();
-//            robot.roller.stop();
-//        } else {
-//            prepareToFireAtAngle();
-//        }
-//    }
-//
-//    public void prepareToFireAtAngle() {
-//        firingStatus = "preparing to fire at angle";
-//        robot.disableToggles();
-//        robot.boom.set(robot.boom.getBoomProperties().getHighGoal());
-////        robot.grabLargeSolenoid.set(false);
-//        robot.grabber.closeLarge();
-////        robot.grabSmallSolenoid.set(false);
-//        robot.grabber.closeSmall();
-//    }
 
-//    void resetFireControls() {
-//        firingStatus = "resetting fire controls";
-////        robot.grabLargeSolenoid.set(false);
-//        robot.grabber.closeLarge();
-////        robot.grabSmallSolenoid.set(false);
-//        robot.grabber.closeSmall();
-//        robot.roller.closeArm();
-//        robot.roller.stop();
-//        robot.firing = false;
-//        fired = false;
-//    }
     
 }
