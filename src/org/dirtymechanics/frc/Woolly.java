@@ -77,11 +77,7 @@ public class Woolly extends IterativeRobot {
     
     private int FIRE_BUTTON = 6;
 
-    private final int LARGE_GRABBER_CTL_GROUP = 8;
-    private final int SMALL_GRABBER_CTL_GROUP = 7;
-    private final int ROLLER_ARM_CTL_GROUP = 5;
-    private final int ROLLER_FORWARD_CTL_GROUP = 10;
-    private final int ROLLER_REVERSE_CTL_GROUP = 9;
+
     private int idealMaxAutoRange = 112;
     private int idealMinAutoRange = 104;
     private final int MAX_AUTO_RANGE = idealMaxAutoRange;

@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.Jaguar;
 import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Talon;
+import edu.wpi.first.wpilibj.networktables.NetworkTable;
 import org.dirtymechanics.event.ButtonListener;
 import org.dirtymechanics.frc.FireButtonEventHandler;
 import org.dirtymechanics.frc.RobotType;
@@ -18,27 +19,29 @@ import org.dirtymechanics.frc.actuator.DoubleSolenoid;
 import org.dirtymechanics.frc.component.arm.grabber.Grabber;
 import org.dirtymechanics.frc.component.arm.grabber.SiblingGrabber;
 import org.dirtymechanics.frc.component.arm.grabber.WoollyGrabber;
-import org.dirtymechanics.frc.control.BasicJoystick;
-import org.dirtymechanics.frc.control.GameController;
-import org.dirtymechanics.frc.control.Joystick;
+import org.dirtymechanics.frc.control.OperatorGameController;
+import org.dirtymechanics.frc.control.OperatorJoystick;
 import org.dirtymechanics.frc.sensor.MaxBotixMaxSonarEZ4;
 import org.dirtymechanics.frc.sensor.RotationalEncoder;
 import org.dirtymechanics.frc.sensor.StringEncoder;
 import org.dirtymechanics.frc.util.Updatable;
 
 public class BallManipulator implements Updatable {
-       /**
-     * Jaguar controlling the screw drive.
-     */
+    NetworkTable server = NetworkTable.getTable("SmartDashboard");
+    
+    Toggle largeGrabberToggle = new Toggle("LargeGrabber");
+    Toggle smallGrabberToggle = new Toggle("SmallGrabber");
+    Toggle rollerArmToggle = new Toggle("RollerArm");
+    Toggle rollerForwardToggle = new Toggle("RollerForward");
+    Toggle rollerReverseToggle = new Toggle("RollerReverse");
+    Toggle boomToggle = new Toggle("BoomIncrement");
+    Toggle screwDriveToggle = new Toggle("ScrewDriveIncrement");
+    
+    
     private final Jaguar screwMotor = new Jaguar(6);
-    /**
-     * Jaguar controlling the boom.
-     */
     private final Talon boomMotor = new Talon(5);
-    /**
-     * Jaguar controller the grabber's roller.
-     */
     public final Relay rollerMotor = new Relay(2);
+    //TODO rename to more descriptive name and get rid of comments.
     /**
      * The string encoder used for the screw drive.
      */
@@ -55,9 +58,7 @@ public class BallManipulator implements Updatable {
     private boolean octoSwitchOpen;
     String firingStatus = "";
         
-    
-    private PIDBoom angleControlAssembly;
-    private ScrewDrive screDrive;
+  
     private final Solenoid firingOpen = new Solenoid(2, 1);
     private final Solenoid firingClose = new Solenoid(2, 2);
     private final DoubleSolenoid firingSolenoid = new DoubleSolenoid(firingOpen, firingClose);
@@ -84,19 +85,14 @@ public class BallManipulator implements Updatable {
      * motor for rasing and lowering the arm.
      */
     public PIDBoom boom;
-    
-    
-    public static final int OPERATOR_CONTROLLER_USB_PORT = 3;
-    public GameController operatorController = new Joystick(OPERATOR_CONTROLLER_USB_PORT);
+    public OperatorGameController operatorController = new OperatorGameController(OperatorGameController.OPERATOR_CONTROLLER_USB_PORT);
     public static final int OPERATOR_JOY_USB_PORT = 4;
-    private BasicJoystick operatorJoy = new Joystick(OPERATOR_JOY_USB_PORT);
+    private OperatorJoystick operatorJoy = new OperatorJoystick(OPERATOR_JOY_USB_PORT);
     
     FireButtonEventHandler fireButtonHandler;
     public ButtonListener fireButtonListener;
     
     public BallManipulator() {
-        //FIXME angleControlAssembly and screwDrive assignments got lost while
-        //moving things so they are never initialized.
     }
 
     public void init() {
@@ -143,31 +139,44 @@ public class BallManipulator implements Updatable {
     }
     
     public void updateScrewDrive() {
-        if (operatorController.getRawAxis(5) < -.5) {
+        if (operatorController.isScrewDriveResetPressed()) {
             screwDrive.set(ScrewDrive.RESET);
-        } else if (operatorController.getRawAxis(5) > .5) {
+        } else if (operatorController.isScrewDriveTrussShotPressed()) {
             screwDrive.set(ScrewDrive.TRUSS_SHOT);
-        } else if (operatorController.getRawAxis(6) > .5) {
+        } else if (operatorController.isScrewDrivePassPressed()) {
             screwDrive.set(ScrewDrive.PASS);
-        } else if (operatorController.getRawAxis(6) < -.5) {
+        } else if (operatorController.isScrewDriveHighGoalPressed()) {
             screwDrive.set(ScrewDrive.HIGH_GOAL);
         }
 
-        if (operatorJoy.getRawAxis(6) < -.5) {
-            if (released[20]) {
+        if (operatorJoy.isScrewDriveIncreaseOffsetPressed()) {
+            if (!screwDriveToggle.isReleased()) {
                 screwDrive.increaseOffset();
-                released[20] = false;
+                screwDriveToggle.setReleased(false);
             }
-            released[20] = false;
-        } else if (operatorJoy.getRawAxis(6) > .5) {
-            if (released[20]) {
+            screwDriveToggle.setCurrentState(false);
+            
+        } else if (operatorJoy.isScrewDriveDecreaseOffsetPressed()) {
+            if (!screwDriveToggle.isReleased()) {
                 screwDrive.decreaseOffset();
-                released[20] = false;
+                screwDriveToggle.setReleased(false);
             }
         } else {
-            released[20] = true;
+            screwDriveToggle.setReleased(true);
         }
     }
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
     
     public void updateOcto() {
         if (isBallSwitchOpen()) {
@@ -181,59 +190,74 @@ public class BallManipulator implements Updatable {
 
         if (octoSwitchOpen) {
             if (System.currentTimeMillis() - octoTime > 250) {
-                if (!operatorController.getRawButton(ROLLER_REVERSE_CTL_GROUP)) {
-                    setToggle(ROLLER_REVERSE_CTL_GROUP, false);
+                if (!operatorController.isRollerReverseButtonPressed()) {
+                    largeGrabberToggle.setCurrentState(false);
                 }
                 if (System.currentTimeMillis() - octoTime > 600) {
-                    setToggle(ROLLER_ARM_CTL_GROUP, false);
+                    rollerArmToggle.setCurrentState(false);
                 }
-                setToggle(LARGE_GRABBER_CTL_GROUP, false);
-                setToggle(SMALL_GRABBER_CTL_GROUP, false);
-                setToggle(ROLLER_FORWARD_CTL_GROUP, false);
+                largeGrabberToggle.setCurrentState(false);
+                smallGrabberToggle.setCurrentState(false);
+                rollerForwardToggle.setCurrentState(false);
                 
                 grabber.closeSmall();
             }
         }
     }
     
+ 
     public void updateBoom() {
         if (!boom.BOOM_ENABLED) {
             return; //early exit, don't do anything.
         }
-        if (operatorJoy.getRawButton(6)) {
-            //boomMotor.set(.7);
-            if (released[21]) {
-                boom.increaseOffset();
-                released[21] = false;
-            }
-        } else if (operatorJoy.getRawButton(4)) {
-            //boomMotor.set(-.7);
-            if (released[21]) {
-                boom.decreaseOffset();
-                released[21] = false;
-            }
-        } else {
-            //boomMotor.set(0);
-            released[21] = true;
-        }
+        doIncrementalMove();  //<--probably broken
 
-        if (operatorController.getRawButton(4)) {
+        if (operatorController.isHighGoalButtonPressed()) {
             boom.set(boom.getBoomProperties().getHighGoal());
-        } else if (operatorController.getRawButton(1)) {
+        } else if (operatorController.isPassButtonPressed()) {
             boom.set(boom.getBoomProperties().getPass());
-        } else if (operatorController.getRawButton(3)) {
+        } else if (operatorController.isRestButtonPressed()) {
             boom.set(boom.getBoomProperties().getRest());
-        } else if (operatorController.getRawButton(2)) {
+        } else if (operatorController.isGroundButtonPressed()) {
             boom.set(boom.getBoomProperties().getGround());
-            setToggle(SMALL_GRABBER_CTL_GROUP, true);
-            setToggle(ROLLER_FORWARD_CTL_GROUP, true);
-            setToggle(ROLLER_REVERSE_CTL_GROUP, false);
-            
+            smallGrabberToggle.setCurrentState(true);
+            rollerForwardToggle.setCurrentState(true);
+            rollerReverseToggle.setCurrentState(false);
             roller.forward();
 //            grabSmallSolenoid.setOpen();
             grabber.openSmall();
         }
     }
+
+    
+
+
+    
+
+
+
+     //TODO I don't think this code was working due to the fact that it
+    //was waiting for presses instead of releases and the intermingled
+    //toggles/confused logic.
+    void doIncrementalMove() {
+        if (operatorJoy.isIncreaseBoomOffsetPressed()) {
+            //boomMotor.set(.7);
+            if (boomToggle.isReleased()) {
+                boom.increaseOffset();
+                boomToggle.setReleased(false);
+            }
+        } else if (operatorJoy.isDecreaseBoomOffsetPressed()) {
+            //boomMotor.set(-.7);
+            if (boomToggle.isReleased()) {
+                boom.decreaseOffset();
+                boomToggle.setReleased(false);
+            }
+        } else {
+            boomToggle.setReleased(true);
+        }
+    }
+
+  
     
     boolean firingButtonTimerExpired() {
         return System.currentTimeMillis() - fireButtonPressTime > 500;
@@ -263,11 +287,11 @@ public class BallManipulator implements Updatable {
 
     private void checkRollerReverseButton() {
         //roller rev
-        if (operatorController.getRawButton(ROLLER_REVERSE_CTL_GROUP)) {
-            if (released[ROLLER_REVERSE_CTL_GROUP]) {
-                toggle[ROLLER_REVERSE_CTL_GROUP]++;
-                released[ROLLER_REVERSE_CTL_GROUP] = false;
-                if (toggle[ROLLER_REVERSE_CTL_GROUP]%2 == 0){
+        if (operatorController.isRollerReverseButtonPressed()) {
+            if (rollerReverseToggle.isReleased()) {
+                rollerReverseToggle.incrementPresses();
+                rollerReverseToggle.setReleased(false);
+                if (!rollerReverseToggle.isOddNumberOfPresses()){
                     server.putString("Wooly.roller", "Reverse");
                     roller.reverse();
                 }
@@ -277,17 +301,20 @@ public class BallManipulator implements Updatable {
                 }
             }
         } else {
-            released[ROLLER_REVERSE_CTL_GROUP] = true;
+            rollerReverseToggle.setReleased(true);
         }
     }
 
+    
+
     private void checkRollerForwardButton() {
         //roller forward
-        if (operatorController.getRawButton(ROLLER_FORWARD_CTL_GROUP)) {
-            if (released[ROLLER_FORWARD_CTL_GROUP]) {
-                toggle[ROLLER_FORWARD_CTL_GROUP]++;
-                released[ROLLER_FORWARD_CTL_GROUP] = false;
-                if (toggle[ROLLER_FORWARD_CTL_GROUP]%2 == 0) {
+        if (operatorController.isRollerForwardButtonPressed()) {
+            if (rollerForwardToggle.isReleased()) {
+                rollerForwardToggle.incrementPresses();
+                rollerForwardToggle.setCurrentState(false);
+                
+                if (!rollerForwardToggle.isOddNumberOfPresses()) {
                     roller.forward();
                     server.putString("Wooly.roller", "Forward");
                 }
@@ -297,18 +324,18 @@ public class BallManipulator implements Updatable {
                 }
             }
         } else {
-            released[ROLLER_FORWARD_CTL_GROUP] = true;
+            rollerForwardToggle.setReleased(true);
         }
     }
 
+
+
     private void checkRollerArmButton() {
-        final boolean rollerArmButtonPressed = operatorController.getRawButton(ROLLER_ARM_CTL_GROUP);
-        //roller arm
-        if (rollerArmButtonPressed) {
-            if (released[ROLLER_ARM_CTL_GROUP]) {
-                toggle[ROLLER_ARM_CTL_GROUP]++;
-                released[ROLLER_ARM_CTL_GROUP] = false;
-                if (toggle[ROLLER_ARM_CTL_GROUP]%2 != 0) {
+        if (operatorController.isRollerArmButtonPressed()) {
+            if (rollerArmToggle.isReleased()) {
+                rollerArmToggle.incrementPresses();
+                rollerArmToggle.setReleased(false);
+                if (rollerArmToggle.isOddNumberOfPresses()) {
                     server.putString("Wooly.rollerArm", "Open");
                     roller.openArm();
                 }
@@ -318,36 +345,81 @@ public class BallManipulator implements Updatable {
                 }
             }
         } else {
-            released[ROLLER_ARM_CTL_GROUP] = true;
-            toggle[ROLLER_ARM_CTL_GROUP]++;
+            rollerArmToggle.setReleased(true);
+            rollerArmToggle.incrementPresses();
         }
     }
 
+
+
     private void checkSmallGrabberButton() {
         //small arm
-        if (operatorController.getRawButton(SMALL_GRABBER_CTL_GROUP)) {
-            if (released[SMALL_GRABBER_CTL_GROUP]) {
-                toggle[SMALL_GRABBER_CTL_GROUP]++;
+        if (operatorController.isSmallGrabberButtonPressed()) {
+            if (smallGrabberToggle.isReleased()) {
+                smallGrabberToggle.incrementPresses();
                 grabber.flipSmall();
-                released[SMALL_GRABBER_CTL_GROUP] = false;
+                smallGrabberToggle.setReleased(false);
             }
         } else {
-            released[SMALL_GRABBER_CTL_GROUP] = true;
+            smallGrabberToggle.setReleased(true);
         }
     }
+
+    
     
 
     private void checkLargeGrabberButton() {
         //large arm
-        if (operatorController.getRawButton(LARGE_GRABBER_CTL_GROUP)) {
-            if (released[LARGE_GRABBER_CTL_GROUP]) {
-                toggle[LARGE_GRABBER_CTL_GROUP]++;
-                released[LARGE_GRABBER_CTL_GROUP] = false;
+        if (operatorController.isLargeGrabberButtonPressed()) {
+            if (largeGrabberToggle.isReleased()) {
+                largeGrabberToggle.incrementPresses();
+                largeGrabberToggle.buttonReleased = false;
                 grabber.flipLarge();
             }
         } else {
-            released[LARGE_GRABBER_CTL_GROUP] = true;
+            largeGrabberToggle.buttonReleased = true;
         }
-    }    
+    }
+    
+    
+    class Toggle {
+        private int numberOfPresses = 0;
+        private boolean currentState = false;
+        private String name;
+        private boolean buttonReleased;
+        
+        public Toggle(String name) {
+            this.name = name;
+        }
+        
+        public boolean isOddNumberOfPresses() {
+            return numberOfPresses%2 != 0;
+        }
+        
+        public void setCurrentState(boolean state) {
+            this.currentState = state;
+        }
+        
+        public void setReleased(boolean released) {
+            this.buttonReleased = released;
+        }
+        
+        public boolean isReleased() {
+            return buttonReleased;
+        }
+        
+        public String getName() {
+            return name;
+        }
+        
+        public int getNumberOfPresses() {
+            return numberOfPresses;
+        }
+
+        private void incrementPresses() {
+            numberOfPresses++;
+        }
+        
+    }
     
 }
