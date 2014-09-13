@@ -135,8 +135,6 @@ public class Woolly extends IterativeRobot {
     private final Solenoid firingOpen = new Solenoid(2, 1);
     private final Solenoid firingClose = new Solenoid(2, 2);
     private final DoubleSolenoid firingSolenoid = new DoubleSolenoid(firingOpen, firingClose);
-//    final GrabberArmPair smallGrabber;
-//    final GrabberArmPair largeGrabber;
     private final ScrewDrive screwDrive = new ScrewDrive(screwMotor, stringEncoder);
     private Solenoid rollerOpen = new Solenoid(1, 3);
     private Solenoid rollerClose = new Solenoid(1, 4);
@@ -145,10 +143,6 @@ public class Woolly extends IterativeRobot {
     Grabber grabber;
     Shooter shooter;
     PIDBoom boom;
-//    private final Solenoid grabLargeOpen;
-//    private final Solenoid grabLargeClose;
-//    final DoubleSolenoid grabLargeSolenoid;
-    
     
     private final Solenoid cameraLEDA = new Solenoid(2, 7);
     private final Solenoid cameraLEDB = new Solenoid(2, 8);
@@ -171,7 +165,6 @@ public class Woolly extends IterativeRobot {
     private long counter = 0;
     private long autoStart;
 
-    //boolean fired;
     String firingStatus = "";
     FireButtonEventHandler fireButtonHandler;
     ButtonListener fireButtonListener;
@@ -211,13 +204,7 @@ public class Woolly extends IterativeRobot {
         server.putNumber("idealMinRange", idealMinAutoRange);
         server.putNumber("BOOM.ROT.PID.IN", 0d);
 
-        
-        
-
         robotPicker = new SendableChooser();
-        
-        // Since we're going to be configuring a lot based on this, we
-        // need a general enumerable.
         
         robotPicker.addDefault("Competition Robot (Default)", RobotType.WOOLLY);
         robotPicker.addObject("Sibling Robot", RobotType.SIBLING);
@@ -257,7 +244,7 @@ public class Woolly extends IterativeRobot {
         idealMaxAutoRange = getIntFromServerValue("idealMaxRange", MAX_AUTO_RANGE);
         idealMinAutoRange = getIntFromServerValue("idealMinRange", MIN_AUTO_RANGE);
         autoStart = System.currentTimeMillis();
-        disableToggles();
+        setTogglesFalse();
         screwDrive.set(ScrewDrive.AUTONOMOUS_SHOT);
         boom.set(boom.getBoomProperties().getMax());
         transmissionSolenoid.setOpen(true);
@@ -582,7 +569,6 @@ public class Woolly extends IterativeRobot {
             if (released[LARGE_GRABBER_CTL_GROUP]) {
                 toggle[LARGE_GRABBER_CTL_GROUP]++;
                 released[LARGE_GRABBER_CTL_GROUP] = false;
-//                grabLargeSolenoid.flip();
                 grabber.flipLarge();
             }
         } else {
@@ -590,15 +576,6 @@ public class Woolly extends IterativeRobot {
         }
     }
 
-//    private boolean isTimeToResetFireControls() {
-//        final boolean resetDelayExpired = System.currentTimeMillis() - actualFireTime > 250;
-//        return resetDelayExpired && fired;
-//    }
-//
-//
-//    private boolean isFireDelayExpired() {
-//        return System.currentTimeMillis() - fireButtonPressTime > 350;
-//    }
 
     private boolean isArmingRange() {
         return ultrasonicSensor.getRangeInInches() > 100 && ultrasonicSensor.getRangeInInches() < 115;
@@ -608,12 +585,6 @@ public class Woolly extends IterativeRobot {
         return ultrasonicSensor.getRangeInInches() > 75 && ultrasonicSensor.getRangeInInches() < 85;
     }
     
-//Range leds use isCorrectRange - don't send mixed messages, but this is the old range...    
-//    private boolean isFiringRange() {
-//        return ultrasonicSensor.getRangeInInches() > 108 && ultrasonicSensor.getRangeInInches() < 111;
-//    }
-
-
     boolean isBallSwitchOpen() {
         return !octo.get();
     }
@@ -722,7 +693,6 @@ public class Woolly extends IterativeRobot {
                 setToggle(SMALL_GRABBER_CTL_GROUP, false);
                 setToggle(ROLLER_FORWARD_CTL_GROUP, false);
                 
-//                smallGrabber.close();
                 grabber.closeSmall();
             }
         }
@@ -742,7 +712,6 @@ public class Woolly extends IterativeRobot {
     }
 
     void printDebug() {
-        
         server.putNumber("BOOM.ROT", rotEncoder.getAverageVoltage());
         server.putNumber("BOOM.ROT.PID", rotEncoder.pidGet());
         server.putNumber("BOOM.LIN", stringEncoder.getAverageVoltage());
@@ -750,8 +719,6 @@ public class Woolly extends IterativeRobot {
         server.putNumber("IMAGE.CONF", imageMatchConfidence);
         server.putNumber("BOOM.RANGE.I", ultrasonicSensor.getRangeInInches());
         server.putBoolean("OCT", octo.get());
-        //System.out.println("firingStatus=" + firingStatus + " firing=" + firing + " fired=" + fired + " fireButtonPressTime=" + fireButtonPressTime + " actualFireTime=" + actualFireTime);
-        //System.out.println("isTimeToResetFireControls=" + isTimeToResetFireControls() + " fireDelayExpired=" + isFireDelayExpired() + " isCorrectRange=" + isCorrectRange());
     }
 
     void setToggle(int num, boolean value) {
@@ -760,7 +727,7 @@ public class Woolly extends IterativeRobot {
         }
     }
 
-    void disableToggles() {
+    void setTogglesFalse() {
         for (int i = 0; i < toggle.length; ++i) {
             setToggle(i, false);
         }
@@ -784,22 +751,13 @@ public class Woolly extends IterativeRobot {
         signalLEDA.set(false);
         signalLEDB.set(false);
         //screwDrive.set(ScrewDrive.RESET);
-        disableToggles();
+        setTogglesFalse();
     }
 
     public void rangeLeds(boolean b) {
         signalLEDA.set(b);
         signalLEDB.set(b);
     }
-
-//    private void logFiringTelemetry() {
-//        final String logMessage = System.currentTimeMillis() + " Range="
-//                + ultrasonicSensor.getRangeInInches() + ", Rot.v=" + rotEncoder.getAverageVoltage() + ", Str.volt="
-//                + stringEncoder.getAverageVoltage() + ", leftA=" + leftDriveMotorA.getSpeed()
-//                + ", rightA=" + rightDriveMotorA.getSpeed();
-//        System.out.println(logMessage);
-//        server.putString(++shotsFired + "shot", logMessage);
-//    }
 
     int getIntFromServerValue(String tableKey, int defaultValue) {
         try {
