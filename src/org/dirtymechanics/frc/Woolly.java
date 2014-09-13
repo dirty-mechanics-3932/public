@@ -1,7 +1,6 @@
 package org.dirtymechanics.frc;
 
 import edu.wpi.first.wpilibj.Compressor;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.IterativeRobot;
 
 import edu.wpi.first.wpilibj.Relay;
@@ -15,7 +14,6 @@ import org.dirtymechanics.frc.component.arm.BallManipulator;
 import org.dirtymechanics.frc.component.arm.ScrewDrive;
 import org.dirtymechanics.frc.component.drive.Transmission;
 import org.dirtymechanics.frc.control.DriveControl;
-import org.dirtymechanics.frc.sensor.MaxBotixMaxSonarEZ4;
 import org.dirtymechanics.frc.sensor.PIDDistanceDrive;
 import org.dirtymechanics.frc.util.List;
 import org.dirtymechanics.frc.util.Updatable;
