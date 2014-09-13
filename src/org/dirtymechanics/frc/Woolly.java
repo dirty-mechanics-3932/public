@@ -47,19 +47,23 @@ public class Woolly extends IterativeRobot {
     /**
      * The physical left joystick.
      */
-    private final Joystick driverLeftJoy = new Joystick(1);
+    private final Joystick driverLeftJoy = new Joystick(DRIVER_LEFT_JOY_USB_PORT);
+    public static final int DRIVER_LEFT_JOY_USB_PORT = 1;
     /**
      * The physical right joystick.
      */
-    private final Joystick driverRightJoy = new Joystick(2);
+    private final Joystick driverRightJoy = new Joystick(DRIVER_RIGHT_JOY_USB_PORT);
+    public static final int DRIVER_RIGHT_JOY_USB_PORT = 2;
     /**
      * The operator's controller.
      */
-    final Joystick operatorController = new Joystick(3);
+    final Joystick operatorController = new Joystick(OPERATOR_CONTROLLER_USB_PORT);
+    public static final int OPERATOR_CONTROLLER_USB_PORT = 3;
     /**
      * The operator's joystick.
      */
-    private final Joystick operatorJoy = new Joystick(4);
+    private final Joystick operatorJoy = new Joystick(OPERATOR_JOY_USB_PORT);
+    public static final int OPERATOR_JOY_USB_PORT = 4;
     /**
      * The compressor's controller.
      */
@@ -167,18 +171,17 @@ public class Woolly extends IterativeRobot {
     private long counter = 0;
     private long autoStart;
 
-    private static final int TRUSS_SHOT_BUTTON = 4;
     //boolean fired;
     String firingStatus = "";
     FireButtonEventHandler fireButtonHandler;
     ButtonListener fireButtonListener;
     private int FIRE_BUTTON = 6;
 
-    private final int largeGrabberToggle = 8;
-    private final int smallGrabberToggle = 7;
-    private final int rollerArmToggle = 5;
-    private final int rollerForwardToggle = 10;
-    private final int rollerReverseToggle = 9;
+    private final int LARGE_GRABBER_CTL_GROUP = 8;
+    private final int SMALL_GRABBER_CTL_GROUP = 7;
+    private final int ROLLER_ARM_CTL_GROUP = 5;
+    private final int ROLLER_FORWARD_CTL_GROUP = 10;
+    private final int ROLLER_REVERSE_CTL_GROUP = 9;
     private int idealMaxAutoRange = 112;
     private int idealMinAutoRange = 104;
     private final int MAX_AUTO_RANGE = idealMaxAutoRange;
@@ -507,11 +510,11 @@ public class Woolly extends IterativeRobot {
 
     private void checkRollerReverseButton() {
         //roller rev
-        if (operatorController.getRawButton(9)) {
-            if (released[9]) {
-                toggle[9]++;
-                released[9] = false;
-                if (toggle[9]%2 == 0){
+        if (operatorController.getRawButton(ROLLER_REVERSE_CTL_GROUP)) {
+            if (released[ROLLER_REVERSE_CTL_GROUP]) {
+                toggle[ROLLER_REVERSE_CTL_GROUP]++;
+                released[ROLLER_REVERSE_CTL_GROUP] = false;
+                if (toggle[ROLLER_REVERSE_CTL_GROUP]%2 == 0){
                     server.putString("Wooly.roller", "Reverse");
                     roller.reverse();
                 }
@@ -521,17 +524,17 @@ public class Woolly extends IterativeRobot {
                 }
             }
         } else {
-            released[9] = true;
+            released[ROLLER_REVERSE_CTL_GROUP] = true;
         }
     }
 
     private void checkRollerForwardButton() {
         //roller forward
-        if (operatorController.getRawButton(10)) {
-            if (released[10]) {
-                toggle[10]++;
-                released[10] = false;
-                if (toggle[10]%2 == 0) {
+        if (operatorController.getRawButton(ROLLER_FORWARD_CTL_GROUP)) {
+            if (released[ROLLER_FORWARD_CTL_GROUP]) {
+                toggle[ROLLER_FORWARD_CTL_GROUP]++;
+                released[ROLLER_FORWARD_CTL_GROUP] = false;
+                if (toggle[ROLLER_FORWARD_CTL_GROUP]%2 == 0) {
                     roller.forward();
                     server.putString("Wooly.roller", "Forward");
                 }
@@ -541,18 +544,18 @@ public class Woolly extends IterativeRobot {
                 }
             }
         } else {
-            released[10] = true;
+            released[ROLLER_FORWARD_CTL_GROUP] = true;
         }
     }
 
     private void checkRollerArmButton() {
-        final boolean rollerArmButtonPressed = operatorController.getRawButton(5);
+        final boolean rollerArmButtonPressed = operatorController.getRawButton(ROLLER_ARM_CTL_GROUP);
         //roller arm
         if (rollerArmButtonPressed) {
-            if (released[5]) {
-                toggle[5]++;
-                released[5] = false;
-                if (toggle[5]%2 != 0) {
+            if (released[ROLLER_ARM_CTL_GROUP]) {
+                toggle[ROLLER_ARM_CTL_GROUP]++;
+                released[ROLLER_ARM_CTL_GROUP] = false;
+                if (toggle[ROLLER_ARM_CTL_GROUP]%2 != 0) {
                     server.putString("Wooly.rollerArm", "Open");
                     roller.openArm();
                 }
@@ -562,36 +565,36 @@ public class Woolly extends IterativeRobot {
                 }
             }
         } else {
-            released[5] = true;
-            toggle[5]++;
+            released[ROLLER_ARM_CTL_GROUP] = true;
+            toggle[ROLLER_ARM_CTL_GROUP]++;
         }
     }
 
     private void checkSmallGrabberButton() {
         //small arm
-        if (operatorController.getRawButton(7)) {
-            if (released[7]) {
-                toggle[7]++;
+        if (operatorController.getRawButton(SMALL_GRABBER_CTL_GROUP)) {
+            if (released[SMALL_GRABBER_CTL_GROUP]) {
+                toggle[SMALL_GRABBER_CTL_GROUP]++;
 //                grabSmallSolenoid.flip();
                 grabber.flipSmall();
-                released[7] = false;
+                released[SMALL_GRABBER_CTL_GROUP] = false;
             }
         } else {
-            released[7] = true;
+            released[SMALL_GRABBER_CTL_GROUP] = true;
         }
     }
 
     private void checkLargeGrabberButton() {
         //large arm
-        if (operatorController.getRawButton(8)) {
-            if (released[8]) {
-                toggle[8]++;
-                released[8] = false;
+        if (operatorController.getRawButton(LARGE_GRABBER_CTL_GROUP)) {
+            if (released[LARGE_GRABBER_CTL_GROUP]) {
+                toggle[LARGE_GRABBER_CTL_GROUP]++;
+                released[LARGE_GRABBER_CTL_GROUP] = false;
 //                grabLargeSolenoid.flip();
                 grabber.flipLarge();
             }
         } else {
-            released[8] = true;
+            released[LARGE_GRABBER_CTL_GROUP] = true;
         }
     }
 
@@ -664,9 +667,9 @@ public class Woolly extends IterativeRobot {
             boom.set(boom.getBoomProperties().getRest());
         } else if (operatorController.getRawButton(2)) {
             boom.set(boom.getBoomProperties().getGround());
-            setToggle(smallGrabberToggle, true);
-            setToggle(rollerForwardToggle, true);
-            setToggle(rollerReverseToggle, false);
+            setToggle(SMALL_GRABBER_CTL_GROUP, true);
+            setToggle(ROLLER_FORWARD_CTL_GROUP, true);
+            setToggle(ROLLER_REVERSE_CTL_GROUP, false);
             
             roller.forward();
 //            grabSmallSolenoid.setOpen();
@@ -717,15 +720,15 @@ public class Woolly extends IterativeRobot {
 
         if (octoSwitchOpen) {
             if (System.currentTimeMillis() - octoTime > 250) {
-                if (!operatorController.getRawButton(rollerReverseToggle)) {
-                    setToggle(rollerReverseToggle, false);
+                if (!operatorController.getRawButton(ROLLER_REVERSE_CTL_GROUP)) {
+                    setToggle(ROLLER_REVERSE_CTL_GROUP, false);
                 }
                 if (System.currentTimeMillis() - octoTime > 600) {
-                    setToggle(rollerArmToggle, false);
+                    setToggle(ROLLER_ARM_CTL_GROUP, false);
                 }
-                setToggle(largeGrabberToggle, false);
-                setToggle(smallGrabberToggle, false);
-                setToggle(rollerForwardToggle, false);
+                setToggle(LARGE_GRABBER_CTL_GROUP, false);
+                setToggle(SMALL_GRABBER_CTL_GROUP, false);
+                setToggle(ROLLER_FORWARD_CTL_GROUP, false);
                 
 //                smallGrabber.close();
                 grabber.closeSmall();
