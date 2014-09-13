@@ -1,16 +1,6 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package org.dirtymechanics.frc.component.arm;
 
-/**
- *
- * @author agresh
- */
-public class CompetitionBoomProps implements BoomProperties {
+public class BoomProps implements BoomProperties {
    double P = .018d;
    double D = .009; // The boom, she wants the D
    

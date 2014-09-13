@@ -15,13 +15,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.dirtymechanics.event.ButtonListener;
 import org.dirtymechanics.frc.actuator.DoubleSolenoid;
 import org.dirtymechanics.frc.component.arm.BoomProperties;
-import org.dirtymechanics.frc.component.arm.CompetitionBoomProps;
+import org.dirtymechanics.frc.component.arm.BoomProps;
 import org.dirtymechanics.frc.component.arm.Shooter;
 import org.dirtymechanics.frc.component.arm.PIDBoom;
 import org.dirtymechanics.frc.component.arm.Roller;
 import org.dirtymechanics.frc.component.arm.ScrewDrive;
-import org.dirtymechanics.frc.component.arm.SiblingBoom;
-import org.dirtymechanics.frc.component.arm.SiblingBoomProps;
+import org.dirtymechanics.frc.component.arm.PIDBoomSibling;
+import org.dirtymechanics.frc.component.arm.BoomPropsSibling;
 import org.dirtymechanics.frc.component.arm.grabber.Grabber;
 import org.dirtymechanics.frc.component.arm.grabber.SiblingGrabber;
 import org.dirtymechanics.frc.component.arm.grabber.WoollyGrabber;
@@ -234,7 +234,7 @@ public class Woolly extends IterativeRobot {
             grabber = new WoollyGrabber();
         }
         else if (robotType == RobotType.SIBLING){
-            boom = new SiblingBoom(boomMotor, rotEncoder);
+            boom = new PIDBoomSibling(boomMotor, rotEncoder);
             grabber = new SiblingGrabber();
         }
         shooter = new Shooter(screwDrive, firingSolenoid, grabber, roller);

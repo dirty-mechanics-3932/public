@@ -6,14 +6,17 @@
 
 package org.dirtymechanics.frc.component.arm;
 
+import edu.wpi.first.wpilibj.Talon;
+import org.dirtymechanics.frc.sensor.RotationalEncoder;
+
 /**
  *
  * @author agresh
  */
-public class SiblingBoomProps extends CompetitionBoomProps {
-    //For now sibling and Competition are the same.  Place overrides here.
-    
-    public int getMoveIncrementSize(){
-        return -10;
+public class PIDBoomSibling extends PIDBoom {
+
+    public PIDBoomSibling(Talon motor, RotationalEncoder rot) {
+        super(motor, rot);
     }
+    
 }
