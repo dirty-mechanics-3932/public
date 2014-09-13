@@ -101,15 +101,6 @@ public class BallManipulator implements Updatable {
         fireButtonListener.addListener(fireButtonHandler);
     }
     
-    public void update() {
-        grabber.update();
-        firingSolenoid.update();
-        rollerSolenoid.update();
-        shooter.update();
-        screwDrive.update();
-        
-    }
-
     public void setType(RobotType robotType) {
         if (robotType == RobotType.WOOLLY) {
             boom = new PIDBoom(boomMotor, rotEncoder);
@@ -210,7 +201,7 @@ public class BallManipulator implements Updatable {
         if (!boom.BOOM_ENABLED) {
             return; //early exit, don't do anything.
         }
-        doIncrementalMove();  //<--probably broken
+        doIncrementalBoomOffset();  //<--probably broken
 
         if (operatorController.isHighGoalButtonPressed()) {
             boom.set(boom.getBoomProperties().getHighGoal());
@@ -239,7 +230,7 @@ public class BallManipulator implements Updatable {
      //TODO I don't think this code was working due to the fact that it
     //was waiting for presses instead of releases and the intermingled
     //toggles/confused logic.
-    void doIncrementalMove() {
+    void doIncrementalBoomOffset() {
         if (operatorJoy.isIncreaseBoomOffsetPressed()) {
             //boomMotor.set(.7);
             if (boomToggle.isReleased()) {
@@ -277,15 +268,8 @@ public class BallManipulator implements Updatable {
         }
     }
     
-    public void checkArmControls() {
-        checkLargeGrabberButton();
-        checkSmallGrabberButton();
-        checkRollerArmButton();
-        checkRollerForwardButton();
-        checkRollerReverseButton();
-    }
 
-    private void checkRollerReverseButton() {
+    private void doRollerReverse() {
         //roller rev
         if (operatorController.isRollerReverseButtonPressed()) {
             if (rollerReverseToggle.isReleased()) {
@@ -307,7 +291,7 @@ public class BallManipulator implements Updatable {
 
     
 
-    private void checkRollerForwardButton() {
+    private void doRollerForward() {
         //roller forward
         if (operatorController.isRollerForwardButtonPressed()) {
             if (rollerForwardToggle.isReleased()) {
@@ -330,7 +314,7 @@ public class BallManipulator implements Updatable {
 
 
 
-    private void checkRollerArmButton() {
+    private void doRollerArm() {
         if (operatorController.isRollerArmButtonPressed()) {
             if (rollerArmToggle.isReleased()) {
                 rollerArmToggle.incrementPresses();
@@ -352,7 +336,7 @@ public class BallManipulator implements Updatable {
 
 
 
-    private void checkSmallGrabberButton() {
+    private void doSmallGrabber() {
         //small arm
         if (operatorController.isSmallGrabberButtonPressed()) {
             if (smallGrabberToggle.isReleased()) {
@@ -368,7 +352,7 @@ public class BallManipulator implements Updatable {
     
     
 
-    private void checkLargeGrabberButton() {
+    private void doLargeGrabber() {
         //large arm
         if (operatorController.isLargeGrabberButtonPressed()) {
             if (largeGrabberToggle.isReleased()) {
@@ -379,6 +363,24 @@ public class BallManipulator implements Updatable {
         } else {
             largeGrabberToggle.buttonReleased = true;
         }
+    }
+
+    public boolean isFireButtonPressed() {
+        return operatorController.isFireButtonPressed();
+    }
+    
+    public void update() {
+        doLargeGrabber();
+        doSmallGrabber();
+        doRollerArm();
+        doRollerForward();
+        doRollerReverse();
+        grabber.update();
+        firingSolenoid.update();
+        rollerSolenoid.update();
+        shooter.update();
+        screwDrive.update();
+        
     }
     
     

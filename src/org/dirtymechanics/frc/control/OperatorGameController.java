@@ -18,7 +18,7 @@ public class OperatorGameController extends edu.wpi.first.wpilibj.Joystick imple
     public static final int REST_BUTTON = 3;
     public static final int HIGH_GOAL_BUTTON = 4;
     public static final int ROLLER_ARM_JOY_BUTTON = 5;
-    
+    public static final int FIRE_BUTTON = 6;
     public static final int SMALL_GRABBER_JOY_BUTTON = 7;
     public static final int LARGE_GRABBER_JOY_BUTTON = 8;
     public static final int ROLLER_REVERSE_JOY_BUTTON = 9;
@@ -86,6 +86,10 @@ public class OperatorGameController extends edu.wpi.first.wpilibj.Joystick imple
     
     public boolean isScrewDriveIncreaseOffsetPressed() {
         return getRawAxis(6) < -.5;
+    }
+
+    public boolean isFireButtonPressed() {
+        return getRawButton(FIRE_BUTTON);
     }
     
     

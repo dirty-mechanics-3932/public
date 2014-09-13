@@ -64,17 +64,8 @@ public class Woolly extends IterativeRobot {
     double imageMatchConfidence = 0.0;
     private PIDDistanceDrive pidDistanceDrive;
 
-    private final int[] toggle = new int[30];
-    private final boolean[] released = new boolean[30];
-
     private long counter = 0;
     private long autoStart;
-
-
-
-    
-    private int FIRE_BUTTON = 6;
-
 
     private int idealMaxAutoRange = 112;
     private int idealMinAutoRange = 104;
@@ -103,8 +94,6 @@ public class Woolly extends IterativeRobot {
         LiveWindow.addSensor("Boom", "Octo Safety", ballManipulator.octo);
         compressor.start();
         ballManipulator.init();
-        
-
         server.putNumber("idealMaxRange", idealMaxAutoRange);
         server.putNumber("idealMinRange", idealMinAutoRange);
         server.putNumber("BOOM.ROT.PID.IN", 0d);
@@ -138,7 +127,6 @@ public class Woolly extends IterativeRobot {
         idealMaxAutoRange = getIntFromServerValue("idealMaxRange", MAX_AUTO_RANGE);
         idealMinAutoRange = getIntFromServerValue("idealMinRange", MIN_AUTO_RANGE);
         autoStart = System.currentTimeMillis();
-        setTogglesFalse();
         //TODO make screwdrive private and encapsulate these ina method
         ballManipulator.screwDrive.set(ScrewDrive.AUTONOMOUS_SHOT);
         ballManipulator.boom.set(ballManipulator.boom.getBoomProperties().getMax());
@@ -267,7 +255,7 @@ public class Woolly extends IterativeRobot {
      */
     public void teleopPeriodic() {
         //TODO encapsulate in method
-        ballManipulator.fireButtonListener.updateState(ballManipulator.operatorController.getRawButton(FIRE_BUTTON), System.currentTimeMillis());
+        ballManipulator.fireButtonListener.updateState(ballManipulator.isFireButtonPressed(), System.currentTimeMillis());
         if (counter++ % 20 == 0) { //call per 20 cycles
             t = System.currentTimeMillis();
             printDebug();
@@ -282,7 +270,6 @@ public class Woolly extends IterativeRobot {
         ballManipulator.updateScrewDrive();
         ballManipulator.updateBoom();
         updateRangeLEDs();
-        ballManipulator.checkArmControls();
         update();
     }
 
@@ -317,17 +304,6 @@ public class Woolly extends IterativeRobot {
         server.putBoolean("OCT", ballManipulator.octo.get());
     }
 
-    void setToggle(int num, boolean value) {
-        if (toggle[num] % 2 == 0 != value) {
-            toggle[num]++;
-        }
-    }
-
-    void setTogglesFalse() {
-        for (int i = 0; i < toggle.length; ++i) {
-            setToggle(i, false);
-        }
-    }
 
     /**
      * This function is used to update all the updatable objects.
@@ -347,8 +323,7 @@ public class Woolly extends IterativeRobot {
         cameraLEDB.set(false);
         signalLEDA.set(false);
         signalLEDB.set(false);
-        //screwDrive.set(ScrewDrive.RESET);
-        setTogglesFalse();
+
     }
 
     public void rangeLeds(boolean b) {
