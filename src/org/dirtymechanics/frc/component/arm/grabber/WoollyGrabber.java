@@ -18,11 +18,11 @@ public class WoollyGrabber implements Grabber, Updatable{
     /**
     Small solenoids extend arms out to slightly open
     */
-    private final GrabberSolenoidPair smallSolenoids;
+    private final DoubleSolenoid smallSolenoids;
     /**
      * Large solenoids open arms out to fully open position
      */
-    private final GrabberSolenoidPair largeSolenoids;
+    private final DoubleSolenoid largeSolenoids;
    
     
     public static final int SMALL_MODULE = 1;
@@ -33,7 +33,7 @@ public class WoollyGrabber implements Grabber, Updatable{
     public static final int LARGE_CLOSE_PORT = 5;
     public static final int LARGE_OPEN_PORT = 6;
     
-    public WoollyGrabber(GrabberSolenoidPair small, GrabberSolenoidPair large){
+    public WoollyGrabber(DoubleSolenoid small, DoubleSolenoid large){
         smallSolenoids = small;
         largeSolenoids = large;
     }
@@ -66,12 +66,12 @@ public class WoollyGrabber implements Grabber, Updatable{
         Solenoid grabSmallOpen = new Solenoid(1, 1);
         Solenoid grabSmallClose = new Solenoid(1, 2);
         DoubleSolenoid grabSmallSolenoid = new DoubleSolenoid(grabSmallOpen, grabSmallClose);
-        smallSolenoids = new GrabberSolenoidPair(grabSmallSolenoid);
+        smallSolenoids = grabSmallSolenoid;
         
         Solenoid grabLargeOpen = new Solenoid(1, 5);
         Solenoid grabLargeClose = new Solenoid(1, 6);
         DoubleSolenoid grabLargeSolenoid = new DoubleSolenoid(grabLargeOpen, grabLargeClose);
-        largeSolenoids = new GrabberSolenoidPair(grabLargeSolenoid);
+        largeSolenoids = grabLargeSolenoid;
         
     }
 

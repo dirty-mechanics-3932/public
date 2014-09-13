@@ -29,11 +29,11 @@ public class DoubleSolenoid implements Updatable {
         setOpen(!isOpen);
     }
 
-    public void setOpen() {
+    public void open() {
         setOpen(true);
     }
 
-    public void setClosed() {
+    public void close() {
         setOpen(false);
     }
 

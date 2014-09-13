@@ -554,7 +554,6 @@ public class Woolly extends IterativeRobot {
         if (operatorController.getRawButton(SMALL_GRABBER_CTL_GROUP)) {
             if (released[SMALL_GRABBER_CTL_GROUP]) {
                 toggle[SMALL_GRABBER_CTL_GROUP]++;
-//                grabSmallSolenoid.flip();
                 grabber.flipSmall();
                 released[SMALL_GRABBER_CTL_GROUP] = false;
             }
@@ -562,6 +561,7 @@ public class Woolly extends IterativeRobot {
             released[SMALL_GRABBER_CTL_GROUP] = true;
         }
     }
+    
 
     private void checkLargeGrabberButton() {
         //large arm

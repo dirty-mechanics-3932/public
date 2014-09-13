@@ -18,9 +18,9 @@ public class SiblingGrabber implements Grabber, Updatable{
     /**
      * grabberSolenoids opens the arms
      */
-    private GrabberSolenoidPair grabberSolenoids;
+    private DoubleSolenoid grabberSolenoids;
     
-    public SiblingGrabber(GrabberSolenoidPair arm){
+    public SiblingGrabber(DoubleSolenoid arm){
         grabberSolenoids = arm;
     }
     
@@ -28,7 +28,6 @@ public class SiblingGrabber implements Grabber, Updatable{
         Solenoid grabOpen = new Solenoid(1, 1);
         Solenoid grabClose = new Solenoid(1, 2);
         DoubleSolenoid grabSolenoid = new DoubleSolenoid(grabOpen, grabClose);
-        grabberSolenoids = new GrabberSolenoidPair(grabSolenoid);
     }
     
     public void openSmall(){
