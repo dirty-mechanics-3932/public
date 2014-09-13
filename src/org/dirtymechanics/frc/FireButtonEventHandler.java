@@ -1,10 +1,8 @@
 
 package org.dirtymechanics.frc;
 
-import edu.wpi.first.wpilibj.Joystick;
 import org.dirtymechanics.event.ButtonEventHandler;
 import org.dirtymechanics.event.ButtonListener;
-import org.dirtymechanics.frc.component.arm.PIDBoom;
 import org.dirtymechanics.frc.control.GameController;
 
 

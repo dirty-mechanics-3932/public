@@ -14,21 +14,20 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.dirtymechanics.event.ButtonListener;
 import org.dirtymechanics.frc.actuator.DoubleSolenoid;
-import org.dirtymechanics.frc.component.arm.BoomProperties;
-import org.dirtymechanics.frc.component.arm.BoomProps;
 import org.dirtymechanics.frc.component.arm.Shooter;
 import org.dirtymechanics.frc.component.arm.PIDBoom;
 import org.dirtymechanics.frc.component.arm.Roller;
 import org.dirtymechanics.frc.component.arm.ScrewDrive;
 import org.dirtymechanics.frc.component.arm.PIDBoomSibling;
-import org.dirtymechanics.frc.component.arm.BoomPropsSibling;
 import org.dirtymechanics.frc.component.arm.grabber.Grabber;
 import org.dirtymechanics.frc.component.arm.grabber.SiblingGrabber;
 import org.dirtymechanics.frc.component.arm.grabber.WoollyGrabber;
 import org.dirtymechanics.frc.component.drive.DriveTrain;
 import org.dirtymechanics.frc.component.drive.Transmission;
 import org.dirtymechanics.frc.control.BasicJoystick;
-import org.dirtymechanics.frc.control.ButtonMap;
+import org.dirtymechanics.frc.control.DriveControl;
+import org.dirtymechanics.frc.control.DriverLeftStick;
+import org.dirtymechanics.frc.control.DriverRightStick;
 import org.dirtymechanics.frc.control.GameController;
 import org.dirtymechanics.frc.control.Joystick;
 import org.dirtymechanics.frc.sensor.MaxBotixMaxSonarEZ4;
@@ -39,7 +38,7 @@ import org.dirtymechanics.frc.util.List;
 import org.dirtymechanics.frc.util.Updatable;
 
 /**
- * The VM is configured to automatically run this class, and to call the
+ * The deployed software is configured to automatically run this class, and to call the
  * functions corresponding to each mode, as described in the IterativeRobot
  * documentation. If you change the name of this class or the package after
  * creating this project, you must also update the manifest file in the resource
@@ -47,29 +46,14 @@ import org.dirtymechanics.frc.util.Updatable;
  */
 public class Woolly extends IterativeRobot {
 
-    /**
-     * The physical left joystick.
-     */
-    private final BasicJoystick driverLeftJoy = new Joystick(DRIVER_LEFT_JOY_USB_PORT);
+    private final DriverLeftStick driverLeftJoy = new DriverLeftStick(DRIVER_LEFT_JOY_USB_PORT);
     public static final int DRIVER_LEFT_JOY_USB_PORT = 1;
-    /**
-     * The physical right joystick.
-     */
-    private final BasicJoystick driverRightJoy = new Joystick(DRIVER_RIGHT_JOY_USB_PORT);
+    private final DriverRightStick driverRightJoy = new DriverRightStick(DRIVER_RIGHT_JOY_USB_PORT);
     public static final int DRIVER_RIGHT_JOY_USB_PORT = 2;
-    /**
-     * The operator's controller.
-     */
     final GameController operatorController = new Joystick(OPERATOR_CONTROLLER_USB_PORT);
     public static final int OPERATOR_CONTROLLER_USB_PORT = 3;
-    /**
-     * The operator's joystick.
-     */
     private final BasicJoystick operatorJoy = new Joystick(OPERATOR_JOY_USB_PORT);
     public static final int OPERATOR_JOY_USB_PORT = 4;
-    /**
-     * The compressor's controller.
-     */
     private final Compressor compressor = new Compressor(1, 1);
     /**
      * Jaguar that's driving the first left motor.
@@ -122,14 +106,10 @@ public class Woolly extends IterativeRobot {
     final MaxBotixMaxSonarEZ4 ultrasonicSensor = new MaxBotixMaxSonarEZ4(3);
 
     private final DigitalInput octo = new DigitalInput(2);
-    /**
-     * The button map used for controllers.
-     */
-    private final ButtonMap buttonMap = new ButtonMap(driverLeftJoy, driverRightJoy, operatorController);
-    /**
-     * The object controlling the drive train.
-     */
+    
     private final DriveTrain driveTrain = new DriveTrain(leftDriveMotorA, leftDriveMotorB, rightDriveMotorA, rightDriveMotorB);
+    private final DriveControl buttonMap = new DriveControl(driverLeftJoy, driverRightJoy, driveTrain);
+    
     /**
      * List of all the updatable objects.
      */
@@ -445,8 +425,9 @@ public class Woolly extends IterativeRobot {
             printDebug();
             turnOffLEDs();
         }
-
-        driveTrain.setSpeed(buttonMap.getDriveLeft(), buttonMap.getDriveRight());
+        
+        buttonMap.setSpeed();
+        
         setTransmission(buttonMap.isTransmissionHigh());
         updateOcto();
 
