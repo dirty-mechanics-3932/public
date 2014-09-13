@@ -20,12 +20,11 @@ import org.dirtymechanics.frc.control.GameController;
  */
 public class FireButtonEventHandler implements ButtonEventHandler {
     private GameController controller;
-    private BallManipulator robot;
+    private BallManipulator ballManipulator;
     boolean isImmediate;
     
     
     private String firingStatus = "";
-    private boolean fired;
     
     //For now pull in the whole robot.  Later tease apart what should be in 
     //  common into some middle ground.  Need the operatorController to
@@ -33,21 +32,24 @@ public class FireButtonEventHandler implements ButtonEventHandler {
     //  to do to shoot.
     public FireButtonEventHandler(GameController operatorController, BallManipulator robot) {
         this.controller = operatorController;
-        this.robot = robot;
+        this.ballManipulator = robot;
     }
 
     public void onEvent(int buttonEvent) {
+        debug(firingStatus);
         switch (buttonEvent) {
             case ButtonListener.SINGLE_CLICK:
                 isImmediate = true;
                 shoot(true);
+                debug("click");
                 break;
+                
             case ButtonListener.HOLD:
                 isImmediate = false;
                 shoot(false);
+                debug("hold");
                 break;
             case ButtonListener.NEUTRAL:
-//                resetFireControls();
                 break;
         }
     }
@@ -57,34 +59,27 @@ public class FireButtonEventHandler implements ButtonEventHandler {
     }
     
     private void lockonShoot() {
-        System.out.println("lockonshoot");
+        debug("lockonshoot");
     }
 
     void startFiringSequence() {
         firingStatus = "starting firing sequence";
-        //if (released[6]) {
         if (isSafeToFire()) {
             firingStatus = "starting firing sequence safety off";
-            robot.firing = true;
+            //TODO this is backwards - ball manipulator should ask this if firing
+            ballManipulator.firing = true;
         }
-        //}
     }
 
     public boolean isSafeToFire() {
         //return true;  //pressing the fire button WILL fire the mechanism
-        return robot.operatorController.getRawButton(11) || robot.isBallSwitchOpen();
+        return ballManipulator.operatorController.getRawButton(11) || ballManipulator.isBallSwitchOpen();
     }
     
-    public void fire(boolean isCorrectRange) {
-        firingStatus = "firing!";
-        System.out.println("wanted to fire at range " + robot.ultrasonicSensor.getRangeInInches());
-        if (isImmediate || isCorrectRange) {
-            System.out.println("fired at range " + robot.ultrasonicSensor.getRangeInInches());
-            robot.shooter.fire();
-            fired = true;
-            robot.actualFireTime = System.currentTimeMillis();
-        } else {
-            System.out.println("did NOT fire at range " + robot.ultrasonicSensor.getRangeInInches() + "isImmediate=" + isImmediate + " isCorrectRange=" + isCorrectRange);
+    private boolean debugEnabled = true;
+    public void debug(String debugString) {
+        if (debugEnabled) {
+            System.out.println(debugString);
         }
     }
 

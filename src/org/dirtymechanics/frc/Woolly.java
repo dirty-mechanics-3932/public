@@ -76,6 +76,7 @@ public class Woolly extends IterativeRobot {
     private SendableChooser robotPicker;
     
     BallManipulator ballManipulator = new BallManipulator();
+    long systemTime = 0;
     
 
     public Woolly() {
@@ -217,38 +218,7 @@ public class Woolly extends IterativeRobot {
 
     }
 
-    //Experimental, not currently called.
-    void autonomousExperimentalHotGoalShot() {
-        //HOT_CONFIDENCE = server.getNumber("HOT_Confidence", 0.0);
-        // Algorithm one: One ball, hot vision
-        /*
-         if (HOT_CONFIDENCE > 75.0) {
-         //shoot
-         }
-         else {
-         //wait a few seconds
-         }
-         */
-        //Algorithm two
-        long dif = System.currentTimeMillis() - autoStart;
-        if (dif > 0 && dif < 2000) {
-            driveControl.setSpeed(-1, 1);
-        } else {
-            //if (dif > 2000 && dif < 2300) {
-            driveControl.setSpeed(0, 0);
-        }/*
-         if (dif > 2300) {
-         roller.openArm();
-         }
-         if (dif > 2500) {
-         shooter.fire();
-         }
-         update();*/
-
-    }
-
-
-    long t = 0;
+    
 
     /**
      * This function is called periodically during operator control.
@@ -257,7 +227,7 @@ public class Woolly extends IterativeRobot {
         //TODO encapsulate in method
         ballManipulator.fireButtonListener.updateState(ballManipulator.isFireButtonPressed(), System.currentTimeMillis());
         if (counter++ % 20 == 0) { //call per 20 cycles
-            t = System.currentTimeMillis();
+            systemTime = System.currentTimeMillis();
             printDebug();
             turnOffLEDs();
         }

@@ -14,6 +14,7 @@ import org.dirtymechanics.frc.util.Updatable;
 public class Shooter implements Updatable {
     Roller roller;
     Grabber grabber;
+    boolean hasFired = false;
 
     private static final int FIRE_WAIT = 250;
 
@@ -96,5 +97,9 @@ public class Shooter implements Updatable {
     }
     private boolean doneWaitingToOpen() {
         return System.currentTimeMillis() - lastFired > FIRE_WAIT;
+    }
+
+    boolean hasFired() {
+        return hasFired;
     }
 }

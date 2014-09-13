@@ -226,6 +226,8 @@ public class ButtonListener {
     public void setTimeSinceLastClick(long timeSinceLastClick) {
         this.timeSinceLastClick = timeSinceLastClick;
     }
+    
+
 
     
     

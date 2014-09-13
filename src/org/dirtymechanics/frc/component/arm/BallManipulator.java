@@ -369,6 +369,8 @@ public class BallManipulator implements Updatable {
         return operatorController.isFireButtonPressed();
     }
     
+    
+    
     public void update() {
         doLargeGrabber();
         doSmallGrabber();
@@ -382,7 +384,7 @@ public class BallManipulator implements Updatable {
         screwDrive.update();
         
     }
-    
+
     
     class Toggle {
         private int numberOfPresses = 0;
