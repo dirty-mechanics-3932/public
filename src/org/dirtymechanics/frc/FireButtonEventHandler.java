@@ -3,6 +3,7 @@ package org.dirtymechanics.frc;
 
 import org.dirtymechanics.event.ButtonEventHandler;
 import org.dirtymechanics.event.ButtonListener;
+import org.dirtymechanics.frc.component.arm.BallManipulator;
 import org.dirtymechanics.frc.control.GameController;
 
 
@@ -19,7 +20,7 @@ import org.dirtymechanics.frc.control.GameController;
  */
 public class FireButtonEventHandler implements ButtonEventHandler {
     private GameController controller;
-    private Woolly robot;
+    private BallManipulator robot;
     boolean isImmediate;
     
     
@@ -30,7 +31,7 @@ public class FireButtonEventHandler implements ButtonEventHandler {
     //  common into some middle ground.  Need the operatorController to
     //  check on the "safety" button.  Need the robot to call all the things
     //  to do to shoot.
-    public FireButtonEventHandler(GameController operatorController, Woolly robot) {
+    public FireButtonEventHandler(GameController operatorController, BallManipulator robot) {
         this.controller = operatorController;
         this.robot = robot;
     }
@@ -69,7 +70,7 @@ public class FireButtonEventHandler implements ButtonEventHandler {
         //}
     }
 
-    private boolean isSafeToFire() {
+    public boolean isSafeToFire() {
         //return true;  //pressing the fire button WILL fire the mechanism
         return robot.operatorController.getRawButton(11) || robot.isBallSwitchOpen();
     }
