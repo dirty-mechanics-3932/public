@@ -16,11 +16,11 @@ public class GrabberSolenoidPair implements Updatable{
     }
 
     public void open() {
-        fingers.set(true);
+        fingers.setOpen(true);
     }
 
     public void close() {
-        fingers.set(false);
+        fingers.setOpen(false);
     }
     
     public void flip(){

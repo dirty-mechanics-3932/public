@@ -260,7 +260,7 @@ public class Woolly extends IterativeRobot {
         disableToggles();
         screwDrive.set(ScrewDrive.AUTONOMOUS_SHOT);
         boom.set(boom.getBoomProperties().getMax());
-        transmissionSolenoid.set(true);
+        transmissionSolenoid.setOpen(true);
         cameraLEDA.set(true);
         cameraLEDB.set(true);
     }
@@ -422,7 +422,7 @@ public class Woolly extends IterativeRobot {
         imageMatchConfidence = server.getNumber("HOT_CONFIDENCE", 0.0);
         if (time < 3000) {
             firing = false;
-            transmissionSolenoid.set(false);
+            transmissionSolenoid.setOpen(false);
             screwDrive.set(ScrewDrive.TRUSS_SHOT);
             //boom.set(Boom.AUTONOMOUS_SHOT);
             driveTrain.setSpeed(.43, .5);

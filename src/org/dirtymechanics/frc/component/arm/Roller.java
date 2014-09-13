@@ -31,10 +31,10 @@ public class Roller {
     }
 
     public void openArm() {
-        solenoid.set(true);
+        solenoid.setOpen(true);
     }
 
     public void closeArm() {
-        solenoid.set(false);
+        solenoid.setOpen(false);
     }
 }

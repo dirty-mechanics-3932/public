@@ -80,10 +80,10 @@ public class Shooter implements Updatable {
             
         }
         if (fired && doneWaitingToOpen()) {
-                firingPin.set(true);
+                firingPin.setOpen(true);
         }
         if (fired && doneShooting()) {
-            firingPin.set(false);
+            firingPin.setOpen(false);
             fired = false;
             set(ScrewDrive.RESET);
         }
