@@ -46,31 +46,12 @@ import org.dirtymechanics.frc.util.Updatable;
  */
 public class Woolly extends IterativeRobot {
 
-    private final DriverLeftStick driverLeftJoy = new DriverLeftStick(DRIVER_LEFT_JOY_USB_PORT);
-    public static final int DRIVER_LEFT_JOY_USB_PORT = 1;
-    private final DriverRightStick driverRightJoy = new DriverRightStick(DRIVER_RIGHT_JOY_USB_PORT);
-    public static final int DRIVER_RIGHT_JOY_USB_PORT = 2;
     final GameController operatorController = new Joystick(OPERATOR_CONTROLLER_USB_PORT);
     public static final int OPERATOR_CONTROLLER_USB_PORT = 3;
     private final BasicJoystick operatorJoy = new Joystick(OPERATOR_JOY_USB_PORT);
     public static final int OPERATOR_JOY_USB_PORT = 4;
     private final Compressor compressor = new Compressor(1, 1);
-    /**
-     * Jaguar that's driving the first left motor.
-     */
-    private final Jaguar leftDriveMotorA = new Jaguar(1);
-    /**
-     * Jaguar that's driving the second left motor.
-     */
-    private final Jaguar leftDriveMotorB = new Jaguar(2);
-    /**
-     * Jaguar that's driving the first right motor.
-     */
-    private final Jaguar rightDriveMotorA = new Jaguar(3);
-    /**
-     * Jaguar that's driving the second right motor.
-     */
-    private final Jaguar rightDriveMotorB = new Jaguar(4);
+    
     /**
      * Jaguar controlling the screw drive.
      */
@@ -107,8 +88,7 @@ public class Woolly extends IterativeRobot {
 
     private final DigitalInput octo = new DigitalInput(2);
     
-    private final DriveTrain driveTrain = new DriveTrain(leftDriveMotorA, leftDriveMotorB, rightDriveMotorA, rightDriveMotorB);
-    private final DriveControl buttonMap = new DriveControl(driverLeftJoy, driverRightJoy, driveTrain);
+    private final DriveControl buttonMap = new DriveControl();
     
     /**
      * List of all the updatable objects.
@@ -203,7 +183,7 @@ public class Woolly extends IterativeRobot {
         updatables.put(rollerSolenoid);
         updatables.put(shooter);
         updatables.put(screwDrive);
-        updatables.put(driveTrain);
+        updatables.put(buttonMap);
     }
     
     void updateSettings() {
@@ -266,23 +246,23 @@ public class Woolly extends IterativeRobot {
                 hot = true;
             }
             if (dist > 150) {
-                driveTrain.setSpeed(.75, .80); //.43
+                buttonMap.setSpeed(.75, .80); //.43
                 server.putString("Auto", "Driving");
             } else if (dist > 92) {
-                driveTrain.setSpeed(.3, .3); //.43
+                buttonMap.setSpeed(.3, .3); //.43
                 server.putString("Auto", "Slowing");
             } else if (dist > 75 && dist < 85) {
-                driveTrain.setSpeed(0, 0);
+                buttonMap.setSpeed(0, 0);
                 server.putString("Auto", "Stopped at range");
             } else if (dist < 75) {
-                driveTrain.setSpeed(-.3, -.3);
+                buttonMap.setSpeed(-.3, -.3);
                 server.putString("Auto", "Overshot");
             } else {
-                driveTrain.setSpeed(0, 0);
+                buttonMap.setSpeed(0, 0);
                 server.putString("Auto", "Stopped");
             }
         } else {
-            driveTrain.setSpeed(0, 0);
+            buttonMap.setSpeed(0, 0);
         }
         
 
@@ -318,9 +298,9 @@ public class Woolly extends IterativeRobot {
     void driveForwardUntil3rdSecondOfAutonomous() {
         long time = System.currentTimeMillis() - autoStart;
         if (time < 3000) {
-            driveTrain.setSpeed(-.73, .75);
+            buttonMap.setSpeed(-.73, .75);
         } else {
-            driveTrain.setSpeed(0, 0);
+            buttonMap.setSpeed(0, 0);
         }
 
     }
@@ -340,10 +320,10 @@ public class Woolly extends IterativeRobot {
         //Algorithm two
         long dif = System.currentTimeMillis() - autoStart;
         if (dif > 0 && dif < 2000) {
-            driveTrain.setSpeed(-1, 1);
+            buttonMap.setSpeed(-1, 1);
         } else {
             //if (dif > 2000 && dif < 2300) {
-            driveTrain.setSpeed(0, 0);
+            buttonMap.setSpeed(0, 0);
         }/*
          if (dif > 2300) {
          roller.openArm();
@@ -395,9 +375,9 @@ public class Woolly extends IterativeRobot {
             transmissionSolenoid.setOpen(false);
             screwDrive.set(ScrewDrive.TRUSS_SHOT);
             //boom.set(Boom.AUTONOMOUS_SHOT);
-            driveTrain.setSpeed(.43, .5);
+            buttonMap.setSpeed(.43, .5);
         } else {
-            driveTrain.setSpeed(0, 0);
+            buttonMap.setSpeed(0, 0);
             if (imageMatchConfidence > 80 || time > 6000) {
                 if (!firing) {
                     roller.openArm();
