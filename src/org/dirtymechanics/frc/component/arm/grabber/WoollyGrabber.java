@@ -7,7 +7,11 @@
 package org.dirtymechanics.frc.component.arm.grabber;
 
 import edu.wpi.first.wpilibj.Solenoid;
+import org.dirtymechanics.event.impl.ButtonListener;
 import org.dirtymechanics.frc.actuator.DoubleSolenoid;
+import org.dirtymechanics.frc.component.arm.event.GrabberLargeButtonEventHandler;
+import org.dirtymechanics.frc.component.arm.event.GrabberSmallButtonEventHandler;
+import org.dirtymechanics.frc.control.OperatorGameController;
 import org.dirtymechanics.frc.util.Updatable;
 
 /**
@@ -15,27 +19,37 @@ import org.dirtymechanics.frc.util.Updatable;
  * @author Zach Sussman
  */
 public class WoollyGrabber implements Grabber, Updatable{
+    
+    public static final int RIO_MODULE_FOR_SMALL = 1;
+    public static final int RIO_PORT_FOR_SMALL_CLOSE = 1;
+    public static final int RIO_PORT_FOR_SMALL_OPEN = 2;
+    
+    public static final int RIO_MODULE_FOR_LARGE = 1;
+    public static final int RIO_PORT_FOR_LARGE_CLOSE = 5;
+    public static final int RIO_PORT_FOR_LARGE_OPEN = 6;
+    
+    private Solenoid grabSmallOpen = new Solenoid(1, 1);
+    private Solenoid grabSmallClose = new Solenoid(1, 2);
+    
     /**
     Small solenoids extend arms out to slightly open
     */
-    private final DoubleSolenoid smallSolenoids;
-    /**
-     * Large solenoids open arms out to fully open position
-     */
-    private final DoubleSolenoid largeSolenoids;
+    private DoubleSolenoid smallSolenoids = new DoubleSolenoid(grabSmallOpen, grabSmallClose);
+    
+    Solenoid grabLargeOpen = new Solenoid(1, 5);
+    Solenoid grabLargeClose = new Solenoid(1, 6);
+    DoubleSolenoid largeSolenoids = new DoubleSolenoid(grabLargeOpen, grabLargeClose);
    
+    //Shared with sibling
+    OperatorGameController gameController;
+    GrabberLargeButtonEventHandler largeButtonEventHandler;
+    ButtonListener largeButtonListener = new ButtonListener();
+    GrabberSmallButtonEventHandler smallButtonEventHandler;
+    ButtonListener smallButtonListener = new ButtonListener();
+        
     
-    public static final int SMALL_MODULE = 1;
-    public static final int SMALL_CLOSE_PORT = 1;
-    public static final int SMALL_OPEN_PORT = 2;
-    
-    public static final int LARGE_MODULE = 1;
-    public static final int LARGE_CLOSE_PORT = 5;
-    public static final int LARGE_OPEN_PORT = 6;
-    
-    public WoollyGrabber(DoubleSolenoid small, DoubleSolenoid large){
-        smallSolenoids = small;
-        largeSolenoids = large;
+    public WoollyGrabber(OperatorGameController gameController) {
+        this.gameController = gameController;
     }
 
     public void openSmall() {
@@ -61,23 +75,12 @@ public class WoollyGrabber implements Grabber, Updatable{
     public void flipLarge() {
         largeSolenoids.flip();
     }
-    
-    public WoollyGrabber(){
-        Solenoid grabSmallOpen = new Solenoid(1, 1);
-        Solenoid grabSmallClose = new Solenoid(1, 2);
-        DoubleSolenoid grabSmallSolenoid = new DoubleSolenoid(grabSmallOpen, grabSmallClose);
-        smallSolenoids = grabSmallSolenoid;
-        
-        Solenoid grabLargeOpen = new Solenoid(1, 5);
-        Solenoid grabLargeClose = new Solenoid(1, 6);
-        DoubleSolenoid grabLargeSolenoid = new DoubleSolenoid(grabLargeOpen, grabLargeClose);
-        largeSolenoids = grabLargeSolenoid;
-        
-    }
 
+    public boolean isOpenLarge() {
+        return largeSolenoids.isOpen();
+    }
+    
     public void update() {
-        largeSolenoids.update();
-        smallSolenoids.update();
     }
     
 }

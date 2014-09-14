@@ -1,5 +1,6 @@
 package org.dirtymechanics.frc.component.arm;
 
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
 import org.dirtymechanics.frc.actuator.DoubleSolenoid;
 import org.dirtymechanics.frc.component.arm.ScrewDrive.Location;
@@ -7,25 +8,16 @@ import org.dirtymechanics.frc.component.arm.grabber.Grabber;
 import org.dirtymechanics.frc.util.Updatable;
 
 /**
- * Represents the mechanism used to fire the ball of the robot.
+ * Manages the firing pin and screw drive ONLY.
  *
- * @author Daniel Ruess
  */
 public class Shooter implements Updatable {
     Roller roller;
     Grabber grabber;
-    boolean hasFired = false;
 
     private static final int FIRE_WAIT = 250;
 
-    /**
-     * The screw drive.
-     */
-    private final ScrewDrive screw;
-    /**
-     * The solenoid used to release the button.
-     */
-    private final DoubleSolenoid firingPin;
+
     /**
      * Whether or not it fired.
      */
@@ -34,27 +26,18 @@ public class Shooter implements Updatable {
      * The time the mechanism was last fired.
      */
     private long lastFired;
-
+    private final Solenoid firingOpen = new Solenoid(2, 1);
+    private final Solenoid firingClose = new Solenoid(2, 2);
+    private final DoubleSolenoid firingPin = new DoubleSolenoid(firingOpen, firingClose);
+    
     /**
      * @param screw The screw drive.
      * @param firingPin The solenoid for releasing the buckle.
      */
-    public Shooter(ScrewDrive screw, DoubleSolenoid firingPin, Grabber grabber, Roller roller) {
-        this.screw = screw;
-        this.firingPin = firingPin;
-        //This isn't the best abstraction for this, just trying to get things working.
-        this.grabber = grabber;
-        this.roller = roller;
+    public Shooter() {
     }
 
-    /**
-     * Sets the location to move the screw drive to.
-     *
-     * @param dest The destination.
-     */
-    public void set(Location dest) {
-        screw.set(dest);
-    }
+
 
     /**
      * Fires the firing pin.
@@ -68,25 +51,18 @@ public class Shooter implements Updatable {
     
 
     /**
-     * Updates the state of the firing pin.
+     * Updates the state of the firing pin, let others worry about their
+     * business.  This is just for the firing pin and the screw drive.
      *
      * Automatically retracts the screw drive after firing.
      */
     public void update() {
-        if (fired && !doneWaitingToOpen()) {
-                grabber.openLarge();
-                grabber.openSmall();
-                roller.openArm();
-                roller.stop();
-            
-        }
         if (fired && doneWaitingToOpen()) {
-                firingPin.setOpen(true);
+                firingPin.open();
         }
         if (fired && doneShooting()) {
-            firingPin.setOpen(false);
+            firingPin.close();
             fired = false;
-            set(ScrewDrive.RESET);
         }
         
         
@@ -99,7 +75,5 @@ public class Shooter implements Updatable {
         return System.currentTimeMillis() - lastFired > FIRE_WAIT;
     }
 
-    boolean hasFired() {
-        return hasFired;
-    }
+
 }

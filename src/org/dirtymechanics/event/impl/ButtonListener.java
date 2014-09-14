@@ -4,9 +4,10 @@
  * and open the template in the editor.
  */
 
-package org.dirtymechanics.event;
+package org.dirtymechanics.event.impl;
 
 import java.util.Vector;
+import org.dirtymechanics.event.ButtonEventHandler;
 
 /**
  *
@@ -15,9 +16,16 @@ import java.util.Vector;
  * listening to the state of the button and will interpret the changes in 
  * state as clicks, holds or double clicks.
  * 
- * State is returned as a int due to the fact that enums aren't available
+ * Requires that updateState be called during teleopPeriodic.  Pass the state
+ * of the button that the listener is intended to monitor.
+ * 
+ * State is returned as an int due to the fact that enums aren't available
  * in the target java version - 1.4
  */
+//TODO create an interface "Button" that can be used for testing and also
+//as a member variable during creation so that you don't have to pass in 
+//the button for the update loop, just the time.  That will allow testing
+//while getting rid of making sure you always pass the correct button.
 public class ButtonListener {
     public static final int PRESS_MILLIS = 500;
     public static final int NEUTRAL = 0;
@@ -36,10 +44,10 @@ public class ButtonListener {
     
     private int state = NEUTRAL;
     private int lastState = NEUTRAL;
-    Vector listeners = new Vector();  //First libs don't support Collections
+    Vector handlers = new Vector();  //First libs don't support Collections
     
-    public void addListener(ButtonEventHandler listener) {
-        listeners.addElement(listener);
+    public void addHandler(ButtonEventHandler listener) {
+        handlers.addElement(listener);
     }
             
     
@@ -47,6 +55,8 @@ public class ButtonListener {
         return state;
     }
     
+    //Note that this class has no knowledge of joysticks.  This is helpful
+    //for unit testing (see TestProject for unit tests).
     public void updateState(boolean buttonState, long currentTime) {
         //Order IS important here.
         updatePollTime(currentTime);
@@ -57,8 +67,8 @@ public class ButtonListener {
         updateHold(buttonState);
         if (lastState != state) {
             //State changed, notify listeners
-           for (int x=0; x < listeners.size(); x++) {
-               ((ButtonEventHandler) listeners.elementAt(0)).onEvent(state);
+           for (int x=0; x < handlers.size(); x++) {
+               ((ButtonEventHandler) handlers.elementAt(0)).onEvent(state);
            }
            lastState = state;
         }

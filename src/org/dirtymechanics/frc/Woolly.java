@@ -90,7 +90,6 @@ public class Woolly extends IterativeRobot {
         //just noise in the dashboard?
         //See if we can send some better telemetry back
         LiveWindow.addSensor("Boom",  "Rotational Encoder", ballManipulator.rotEncoder);
-        LiveWindow.addSensor("Boom", "String Encoder", ballManipulator.stringEncoder);
         LiveWindow.addSensor("Drive", "Ultrasonic", ballManipulator.ultrasonicSensor);
         LiveWindow.addSensor("Boom", "Octo Safety", ballManipulator.octo);
         compressor.start();
@@ -129,9 +128,10 @@ public class Woolly extends IterativeRobot {
         idealMinAutoRange = getIntFromServerValue("idealMinRange", MIN_AUTO_RANGE);
         autoStart = System.currentTimeMillis();
         //TODO make screwdrive private and encapsulate these ina method
-        ballManipulator.screwDrive.set(ScrewDrive.AUTONOMOUS_SHOT);
-        ballManipulator.boom.set(ballManipulator.boom.getBoomProperties().getMax());
-        transmissionSolenoid.setOpen(true);
+        ballManipulator.setScrewDriveAutonomous();
+        ballManipulator.setBoomRest();
+        
+        transmissionSolenoid.open();
         cameraLEDA.set(true);
         cameraLEDB.set(true);
     }
@@ -147,21 +147,22 @@ public class Woolly extends IterativeRobot {
         imageMatchConfidence = server.getNumber("HOT_CONFIDENCE", 0.0);
 
         if (ballManipulator.octo.get() && time < 3000) {
-            ballManipulator.rollerMotor.set(Relay.Value.kForward);
+            ballManipulator.rollerForward();
         } else {
-            ballManipulator.rollerMotor.set(Relay.Value.kOff);
+            ballManipulator.rollerStop();
         }
 
         if (time < 4200) {
             if (time < 175) {
-                ballManipulator.roller.openArm();
+                ballManipulator.rollerArmOpen();
 //                grabSmallSolenoid.setOpen();
                 ballManipulator.grabber.openSmall();
             } else {
                 ballManipulator.roller.closeArm();
 //                grabSmallSolenoid.setClosed();
                 ballManipulator.grabber.closeSmall();
-                ballManipulator.boom.set(ballManipulator.boom.getBoomProperties().getAutonomousShot());
+                ballManipulator.setBoomAutonomouseShot();
+                
             }
             if (imageMatchConfidence > 35 && time > 300) {
                 hot = true;
@@ -224,8 +225,6 @@ public class Woolly extends IterativeRobot {
      * This function is called periodically during operator control.
      */
     public void teleopPeriodic() {
-        //TODO encapsulate in method
-        ballManipulator.fireButtonListener.updateState(ballManipulator.isFireButtonPressed(), System.currentTimeMillis());
         if (counter++ % 20 == 0) { //call per 20 cycles
             systemTime = System.currentTimeMillis();
             printDebug();
@@ -236,9 +235,7 @@ public class Woolly extends IterativeRobot {
         
         setTransmission(driveControl.isTransmissionHigh());
         //TODO isn't this being done by update?  It should be...
-        ballManipulator.updateOcto();
-        ballManipulator.updateScrewDrive();
-        ballManipulator.updateBoom();
+        
         updateRangeLEDs();
         update();
     }
@@ -267,7 +264,7 @@ public class Woolly extends IterativeRobot {
     void printDebug() {
         server.putNumber("BOOM.ROT", ballManipulator.rotEncoder.getAverageVoltage());
         server.putNumber("BOOM.ROT.PID", ballManipulator.rotEncoder.pidGet());
-        server.putNumber("BOOM.LIN", ballManipulator.stringEncoder.getAverageVoltage());
+        
         server.putNumber("BOOM.RANGE.V", ballManipulator.ultrasonicSensor.getAverageVoltage());
         server.putNumber("IMAGE.CONF", imageMatchConfidence);
         server.putNumber("BOOM.RANGE.I", ballManipulator.ultrasonicSensor.getRangeInInches());
@@ -287,8 +284,9 @@ public class Woolly extends IterativeRobot {
     }
 
     public void teleopInit() {
-        //TODO encapsulate in method
-        ballManipulator.boom.set(ballManipulator.boom.getBoomProperties().getGround());
+        //TODO why ground?
+        ballManipulator.boomGround();
+        
         cameraLEDA.set(false);
         cameraLEDB.set(false);
         signalLEDA.set(false);

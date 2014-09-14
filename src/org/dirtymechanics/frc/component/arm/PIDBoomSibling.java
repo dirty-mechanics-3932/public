@@ -7,6 +7,8 @@
 package org.dirtymechanics.frc.component.arm;
 
 import edu.wpi.first.wpilibj.Talon;
+import org.dirtymechanics.frc.control.OperatorGameController;
+import org.dirtymechanics.frc.control.OperatorJoystick;
 import org.dirtymechanics.frc.sensor.RotationalEncoder;
 
 /**
@@ -15,8 +17,8 @@ import org.dirtymechanics.frc.sensor.RotationalEncoder;
  */
 public class PIDBoomSibling extends PIDBoom {
 
-    public PIDBoomSibling(Talon motor, RotationalEncoder rot) {
-        super(motor, rot);
+    public PIDBoomSibling(Talon motor, RotationalEncoder rot, OperatorJoystick operatorJoy, OperatorGameController gameController) {
+        super(motor, rot, operatorJoy, gameController);
     }
     
 }

@@ -22,5 +22,7 @@ public interface Grabber extends Updatable {
     public abstract void openLarge();
     public abstract void closeLarge();
     public abstract void flipLarge();
+
+    public boolean isOpenLarge();
     
 }

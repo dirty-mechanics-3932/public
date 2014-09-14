@@ -1,40 +1,118 @@
 package org.dirtymechanics.frc.component.arm;
 
+import org.dirtymechanics.frc.component.arm.event.RollerReverseButtonEventHandler;
+import org.dirtymechanics.frc.component.arm.event.RollerForwardButtonEventHandler;
 import edu.wpi.first.wpilibj.Relay;
+import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.networktables.NetworkTable;
+import org.dirtymechanics.event.impl.ButtonListener;
 import org.dirtymechanics.frc.actuator.DoubleSolenoid;
+import org.dirtymechanics.frc.component.arm.event.RollerArmButtonEventHandler;
+import org.dirtymechanics.frc.control.OperatorGameController;
+import org.dirtymechanics.frc.util.Updatable;
 
-/**
- *
- * @author Daniel Ruess
- */
-public class Roller {
+//TODO most of the public methods here should be package scope
+public class Roller implements Updatable {
+    NetworkTable server = NetworkTable.getTable("SmartDashboard");
+    
+    private Relay motorRelay = new Relay(2);
+    private Solenoid rollerOpen = new Solenoid(1, 3);
+    private Solenoid rollerClose = new Solenoid(1, 4);
+    private DoubleSolenoid armSolenoid = new DoubleSolenoid(rollerOpen, rollerClose);
+    //TODO move all these handlers and listeners into the operator controller
+    RollerForwardButtonEventHandler rollerForwardButtonEventHandler; 
+    ButtonListener rollerForwardButtonListener = new ButtonListener();
+    RollerReverseButtonEventHandler rollerReverseButtonEventHandler; 
+    ButtonListener rollerReverseButtonListener = new ButtonListener();
+    RollerArmButtonEventHandler rollerArmButtonEventHanlder;
+    ButtonListener rollerArmButtonListener = new ButtonListener();
+    private OperatorGameController operatorController;
+    
 
-    private final Relay motor;
-    private final DoubleSolenoid solenoid;
-
-    public Roller(Relay motor, DoubleSolenoid solenoid) {
-        this.motor = motor;
-        this.solenoid = solenoid;
+    public Roller(OperatorGameController operatorController) {
+        this.operatorController = operatorController;
     }
-
+    
+    public void init() {
+        rollerForwardButtonEventHandler = new RollerForwardButtonEventHandler(operatorController, this);
+        rollerForwardButtonListener.addHandler(rollerForwardButtonEventHandler);
+        rollerArmButtonEventHanlder = new RollerArmButtonEventHandler(operatorController, this);
+        rollerArmButtonListener.addHandler(rollerArmButtonEventHanlder);
+    }
+    
     public void forward() {
-        motor.set(Relay.Value.kForward);
+        motorRelay.set(Relay.Value.kForward);
     }
 
     public void stop() {
-        motor.set(Relay.Value.kOff);
+        motorRelay.set(Relay.Value.kOff);
 
     }
 
     public void reverse() {
-        motor.set(Relay.Value.kReverse);
+        motorRelay.set(Relay.Value.kReverse);
     }
 
     public void openArm() {
-        solenoid.setOpen(true);
+        armSolenoid.open();
+        reportStatus("Roller.Arm", "Open");
     }
 
     public void closeArm() {
-        solenoid.setOpen(false);
+        armSolenoid.close();
+        reportStatus("Roller.Arm", "Closed");
+    }
+    
+    public void toggleForward() {
+        if (isRollerDirection(Relay.Value.kForward)) {
+            stop();
+            reportStatus("stop");
+        } else {
+            forward();
+            reportStatus("forward");
+        }
+        
+    }
+    
+    public void toggleReverse() {
+        if (isRollerDirection(Relay.Value.kReverse)) {
+            stop();
+            reportStatus("stop");
+        } else {
+            reverse();
+            reportStatus("forward");
+        }
+        
+    }
+
+    public void reportStatus(String status) {
+        server.putString("Roller", status);
+    }
+    
+    public void reportStatus(String component, String status) {
+        server.putString(component, status);
+    }
+
+
+    public boolean isRollerDirection(final Relay.Value direction) {
+        return motorRelay.get().equals(direction);
+    }
+    
+ 
+    
+    
+    public void toggleArm() {
+        if (armSolenoid.isOpen()) {
+            closeArm();
+        } else {
+            openArm();
+        }
+    }
+
+    public void update() {
+        long currentTime = System.currentTimeMillis();
+        rollerForwardButtonListener.updateState(operatorController.isRollerForwardButtonPressed(), currentTime);
+        rollerReverseButtonListener.updateState(operatorController.isRollerReverseButtonPressed(), currentTime);
+        rollerArmButtonListener.updateState(operatorController.isRollerArmButtonPressed(), currentTime);
     }
 }

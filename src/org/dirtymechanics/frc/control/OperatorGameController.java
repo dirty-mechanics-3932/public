@@ -72,7 +72,7 @@ public class OperatorGameController extends edu.wpi.first.wpilibj.Joystick imple
         return getRawAxis(5) < -.5;
     }
     
-    public boolean isScrewDriveTrussShotPressed() {
+    public boolean isScrewDriveTrussPressed() {
         return getRawAxis(5) > .5;
     }
     
@@ -80,7 +80,7 @@ public class OperatorGameController extends edu.wpi.first.wpilibj.Joystick imple
         return getRawAxis(6) > .5;
     }
     
-    public boolean isScrewDriveHighGoalPressed() {
+    public boolean isScrewDriveHighPressed() {
         return getRawAxis(6) < -.5;
     }
     

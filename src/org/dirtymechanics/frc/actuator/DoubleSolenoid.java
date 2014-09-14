@@ -1,11 +1,11 @@
 package org.dirtymechanics.frc.actuator;
 
 import edu.wpi.first.wpilibj.Solenoid;
-import org.dirtymechanics.frc.util.Updatable;
-public class DoubleSolenoid implements Updatable {
+
+public class DoubleSolenoid {
     private final Solenoid openSpike;
     private final Solenoid closeSpike;
-    private boolean isOpen = false;
+
     
     public DoubleSolenoid(Solenoid openSpike, Solenoid closeSpike) {
         this.openSpike = openSpike;
@@ -18,35 +18,36 @@ public class DoubleSolenoid implements Updatable {
      *
      * @param state The state of the solenoid.
      */
-    public void setOpen(boolean state) {
-        this.isOpen = state;
+    private void setOpen(boolean isOpen) {
+        if (isOpen) {
+            open();
+        } else {
+            close();
+        }
     }
 
     /**
      * Inverts the state.
      */
     public void flip() {
-        setOpen(!isOpen);
+        setOpen(!isOpen());
     }
 
     public void open() {
-        setOpen(true);
+        openSpike.set(true);
+        closeSpike.set(false);
     }
 
     public void close() {
-        setOpen(false);
+        openSpike.set(false);
+        closeSpike.set(true);
     }
 
     /**
-     * Called per cycle to update the state of the valves.
+     * Returns true if the openSpike solenoid is on.
+     * @return 
      */
-    public void update() {
-        if (isOpen) {
-            openSpike.set(true);
-            closeSpike.set(false);
-        } else {
-            openSpike.set(false);
-            closeSpike.set(true);
-        }
+    public boolean isOpen() {
+        return openSpike.get();
     }
 }
