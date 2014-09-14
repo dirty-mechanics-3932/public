@@ -18,7 +18,7 @@ import org.dirtymechanics.frc.util.Updatable;
  * Implements Woolly's grabber mechanism (i.e. the side arms).
  * @author Zach Sussman
  */
-public class WoollyGrabber implements Grabber, Updatable{
+public class WoollyGrabber implements Grabber, Updatable {
     
     public static final int RIO_MODULE_FOR_SMALL = 1;
     public static final int RIO_PORT_FOR_SMALL_CLOSE = 1;
@@ -81,6 +81,10 @@ public class WoollyGrabber implements Grabber, Updatable{
     }
     
     public void update() {
+    }
+
+    public boolean isOpenSmall() {
+        return smallSolenoids.isOpen();
     }
     
 }

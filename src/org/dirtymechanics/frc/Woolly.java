@@ -141,6 +141,8 @@ public class Woolly extends IterativeRobot {
      * This function is called periodically during autonomous.
      */
     public void autonomousPeriodic() {
+        //TODO the guts of this method should be broken out into a 
+        //periodic class that is broken into more managable methods.
         long time = System.currentTimeMillis() - autoStart;
         double dist = ballManipulator.ultrasonicSensor.getRangeInInches();
 
@@ -264,7 +266,6 @@ public class Woolly extends IterativeRobot {
     void printDebug() {
         server.putNumber("BOOM.ROT", ballManipulator.rotEncoder.getAverageVoltage());
         server.putNumber("BOOM.ROT.PID", ballManipulator.rotEncoder.pidGet());
-        
         server.putNumber("BOOM.RANGE.V", ballManipulator.ultrasonicSensor.getAverageVoltage());
         server.putNumber("IMAGE.CONF", imageMatchConfidence);
         server.putNumber("BOOM.RANGE.I", ballManipulator.ultrasonicSensor.getRangeInInches());
@@ -307,8 +308,6 @@ public class Woolly extends IterativeRobot {
             return defaultValue;
         }
     }
-
-
     
     public void testPeriodic(){
        

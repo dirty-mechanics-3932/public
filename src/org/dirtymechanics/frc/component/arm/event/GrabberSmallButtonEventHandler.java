@@ -20,7 +20,11 @@ public class GrabberSmallButtonEventHandler implements ButtonEventHandler {
     public void onEvent(int buttonEvent) {
         switch (buttonEvent) {
             case ButtonListener.SINGLE_CLICK:
-                grabber.openSmall();
+                if (grabber.isOpenSmall()) {
+                    grabber.closeSmall();
+                } else {
+                    grabber.openSmall();
+                }
                 break;
             case ButtonListener.HOLD:
                 break;
