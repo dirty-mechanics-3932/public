@@ -34,14 +34,12 @@ public class FireButtonEventHandler implements ButtonEventHandler {
     public void onEvent(int buttonEvent) {
         switch (buttonEvent) {
             case ButtonListener.SINGLE_CLICK:
-                ballManipulator.setImmediate(true);
-                ballManipulator.setShoot(true);
-                ballManipulator.shoot(System.currentTimeMillis());
+                ballManipulator.startImmediateFiringSequance(System.currentTimeMillis());
                 break;
                 
             case ButtonListener.HOLD:
-                ballManipulator.setImmediate(false);
-                ballManipulator.setShoot(false);
+//                ballManipulator.setImmediate(false);
+//                ballManipulator.setShoot(false);
                 break;
             case ButtonListener.NEUTRAL:
                 break;

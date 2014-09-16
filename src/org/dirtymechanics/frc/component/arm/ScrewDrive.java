@@ -160,7 +160,6 @@ public class ScrewDrive implements Updatable {
                 set(HIGH_GOAL);
             }
         }
-        //System.out.println("stringEncoder = " + loc + " dest = " + dest);
     }
 
     

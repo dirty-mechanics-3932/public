@@ -9,8 +9,6 @@ package org.dirtymechanics.frc.component.arm;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
-import org.dirtymechanics.event.impl.ButtonListener;
-import org.dirtymechanics.frc.component.arm.event.FireButtonEventHandler;
 import org.dirtymechanics.frc.RobotType;
 import org.dirtymechanics.frc.component.arm.grabber.Grabber;
 import org.dirtymechanics.frc.component.arm.grabber.SiblingGrabber;
@@ -22,6 +20,7 @@ import org.dirtymechanics.frc.sensor.RotationalEncoder;
 import org.dirtymechanics.frc.util.Updatable;
 
 public class BallManipulator implements Updatable {
+    
     NetworkTable server = NetworkTable.getTable("SmartDashboard");
     
     private final Talon boomMotor = new Talon(5);
@@ -36,15 +35,11 @@ public class BallManipulator implements Updatable {
      */
     public final RotationalEncoder rotEncoder = new RotationalEncoder(2);
     
-    public boolean firing;
-    private long fireButtonPressTime;
-    public long actualFireTime;
+    
+    
     private long octoTime;
     private boolean octoSwitchOpen;
-    String firingStatus = "";
-    private boolean fired;
-    
-    boolean isImmediate;
+
     
     
     public MaxBotixMaxSonarEZ4 ultrasonicSensor = new MaxBotixMaxSonarEZ4(3);
@@ -71,10 +66,8 @@ public class BallManipulator implements Updatable {
     public static final int OPERATOR_JOY_USB_PORT = 4;
     private OperatorJoystick operatorJoy = new OperatorJoystick(OPERATOR_JOY_USB_PORT);
     
-    FireButtonEventHandler fireButtonHandler;
-    ButtonListener fireButtonListener = new ButtonListener();
-//    public ButtonListener fireButtonListener;
-    private boolean shoot = false;
+
+    FireControl fireControl;
     
     
     
@@ -84,10 +77,10 @@ public class BallManipulator implements Updatable {
 
     public void init() {
         screwDrive.init();
-        fireButtonHandler = new FireButtonEventHandler(operatorController, this);
-        fireButtonListener.addHandler(fireButtonHandler);
         roller.init();
         boom.init();
+        shooter.init();
+        fireControl = new FireControl(operatorController, this);
         
     }
     
@@ -114,9 +107,6 @@ public class BallManipulator implements Updatable {
         return !octo.get();
     }
 
-    boolean holdingTheBallAndNotFiring() {
-        return !octoSwitchOpen && !firing;
-    }
     
     //TODO move this stuff into grabber
     public void updateOcto() {
@@ -146,121 +136,39 @@ public class BallManipulator implements Updatable {
         }
     }
 
-
-    
-   
-  
-    
-    boolean firingButtonTimerExpired() {
-        return System.currentTimeMillis() - fireButtonPressTime > 500;
-    }
-
-    public void shootAutonomous(long time) {
-        if (!firing) {
-            roller.openArm();
-//                    grabSmallSolenoid.setOpen();
-            grabber.openSmall();
-            firing = true;
-            fireButtonPressTime = System.currentTimeMillis();
-        }
-        if ((time > 6300 || System.currentTimeMillis() - fireButtonPressTime > 300)) {
-            shooter.fire();
-            firing = false;
-        }
-    }
-
-
-    public boolean isFireButtonPressed() {
-        return operatorController.isFireButtonPressed();
-    }
-    
-    
-    
     public void update() {
-        fireButtonListener.updateState(isFireButtonPressed(), System.currentTimeMillis());
+        
         grabber.update();
         shooter.update();
         screwDrive.update();
         roller.update();
         updateOcto();
         boom.update();
+        
+        fireControl.update();
     }
     
-    public void setImmediate(boolean immediate) {
-        isImmediate = immediate;
-    }
     
-    public void setShoot(boolean shoot) {
-        this.shoot = shoot;
-    }
     
-    private void lockonShoot() {
-        debug("lockonshoot");
-    }
+
 
     /**
-     * Called from event handler
+     * Called from event handler once when button is pressed
      * @param time 
      */
-    public void shoot(long time) {
-       if (isTimeToResetFireControls()) {
-            debug("reset");
-            resetFireControls();
-        } else if (isTimeToFire()) {
-            debug("fire");
-            fire();
-
-        } else {
-            debug("prepare to fire");
-            prepareToFire();
-        }
-    }
-    
-    void prepareToFire() {
-        firingStatus = "preparing to fire";
-//        disableToggles();
-        roller.openArm();
-        grabber.openSmall();
-    }
-    
-    public void fire() {
-        firingStatus = "firing!";
-        shooter.fire();
-        fired = true;
-        actualFireTime = System.currentTimeMillis();
-        
-    }
-    
-    private boolean isTimeToResetFireControls() {
-        final boolean resetDelayExpired = System.currentTimeMillis() - actualFireTime > 250;
-        return resetDelayExpired && fired;
-    }
-
-    private boolean isTimeToFire() {
-        boolean fireDelayExpired = isFireDelayExpired();
-        boolean rangeIsCorrect = true; //isCorrectRange();
-        return fireDelayExpired && rangeIsCorrect;
-    }
-    
-    private boolean isFireDelayExpired() {
-        return System.currentTimeMillis() - fireButtonPressTime > 350;
-    }
-    
-    void resetFireControls() {
-        firingStatus = "resetting fire controls";
-//        disableToggles();
-        firing = false;
-        fired = false;
-        screwDrive.reset();
+    public void startImmediateFiringSequance(long time) {
+       fireControl.startFiringSequence(time);
     }
 
     
-    private boolean debugEnabled = true;
-    public void debug(String debugString) {
-        if (debugEnabled) {
-            System.out.println(debugString);
-        }
-    }
+    
+    
+    
+    
+
+
+    
+
 
     public void rollerForward() {
         roller.forward();
@@ -288,6 +196,26 @@ public class BallManipulator implements Updatable {
 
     public void boomGround() {
         boom.ground();
+    }
+
+    void resetScrewDrive() {
+        screwDrive.reset();
+    }
+
+    void openRollerArm() {
+        roller.openArm();
+    }
+
+    void openSmall() {
+        grabber.openSmall();
+    }
+
+    void openFire() {
+        shooter.fire();
+    }
+
+    public void shootAutonomous(long time) {
+        fireControl.shootAutonomous(time);
     }
    
     

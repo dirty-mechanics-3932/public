@@ -29,12 +29,17 @@ public class Shooter implements Updatable {
     private final Solenoid firingOpen = new Solenoid(2, 1);
     private final Solenoid firingClose = new Solenoid(2, 2);
     private final DoubleSolenoid firingPin = new DoubleSolenoid(firingOpen, firingClose);
+    NetworkTable server = NetworkTable.getTable("SmartDashboard");
     
     /**
      * @param screw The screw drive.
      * @param firingPin The solenoid for releasing the buckle.
      */
     public Shooter() {
+    }
+    
+    public void init() {
+        firingPin.close();
     }
 
 
@@ -58,12 +63,21 @@ public class Shooter implements Updatable {
      */
     public void update() {
         if (fired && doneWaitingToOpen()) {
+                System.out.println("open firing pin");
                 firingPin.open();
         }
         if (fired && doneShooting()) {
+            System.out.println("closing firing pin");
             firingPin.close();
             fired = false;
         }
+        server.putBoolean("Shooter.fired", fired);
+        server.putBoolean("Shooter.firingPin.isOpen()", firingPin.isOpen());
+        server.putBoolean("Shooter.doneWaitingToOpen", doneWaitingToOpen());
+        server.putBoolean("Shooter.doneShooting()", doneShooting());
+        server.putNumber("Shooter.lastFired", lastFired);
+        server.putNumber("Shooter.FIRE_WAIT", FIRE_WAIT);
+        server.putNumber("Shooter.waitTime", System.currentTimeMillis() - lastFired);
         
         
     }

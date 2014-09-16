@@ -58,7 +58,6 @@ public class WoollyGrabber implements Grabber, Updatable {
     }
 
     public void openSmall() {
-        System.out.println("open small grabber arms");
         smallSolenoids.open();
     }
 
