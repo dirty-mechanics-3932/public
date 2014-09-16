@@ -24,7 +24,7 @@ public class Roller implements Updatable {
     ButtonListener rollerForwardButtonListener = new ButtonListener();
     RollerReverseButtonEventHandler rollerReverseButtonEventHandler; 
     ButtonListener rollerReverseButtonListener = new ButtonListener();
-    RollerArmButtonEventHandler rollerArmButtonEventHanlder;
+    RollerArmButtonEventHandler rollerArmButtonEventHandler;
     ButtonListener rollerArmButtonListener = new ButtonListener();
     private OperatorGameController operatorController;
     
@@ -36,8 +36,10 @@ public class Roller implements Updatable {
     public void init() {
         rollerForwardButtonEventHandler = new RollerForwardButtonEventHandler(operatorController, this);
         rollerForwardButtonListener.addHandler(rollerForwardButtonEventHandler);
-        rollerArmButtonEventHanlder = new RollerArmButtonEventHandler(operatorController, this);
-        rollerArmButtonListener.addHandler(rollerArmButtonEventHanlder);
+        rollerArmButtonEventHandler = new RollerArmButtonEventHandler(operatorController, this);
+        rollerArmButtonListener.addHandler(rollerArmButtonEventHandler);
+        rollerReverseButtonEventHandler = new RollerReverseButtonEventHandler(operatorController, this);
+        rollerReverseButtonListener.addHandler(rollerReverseButtonEventHandler);
     }
     
     public void forward() {
@@ -54,12 +56,12 @@ public class Roller implements Updatable {
     }
 
     public void openArm() {
-        armSolenoid.open();
+        armSolenoid.close();
         reportStatus("Roller.Arm", "Open");
     }
 
     public void closeArm() {
-        armSolenoid.close();
+        armSolenoid.open();
         reportStatus("Roller.Arm", "Closed");
     }
     
@@ -102,7 +104,7 @@ public class Roller implements Updatable {
     
     
     public void toggleArm() {
-        if (armSolenoid.isOpen()) {
+        if (!armSolenoid.isOpen()) {
             closeArm();
         } else {
             openArm();

@@ -93,7 +93,6 @@ public class Woolly extends IterativeRobot {
         LiveWindow.addSensor("Drive", "Ultrasonic", ballManipulator.ultrasonicSensor);
         LiveWindow.addSensor("Boom", "Octo Safety", ballManipulator.octo);
         compressor.start();
-        ballManipulator.init();
         server.putNumber("idealMaxRange", idealMaxAutoRange);
         server.putNumber("idealMinRange", idealMinAutoRange);
         server.putNumber("BOOM.ROT.PID.IN", 0d);
@@ -106,9 +105,10 @@ public class Woolly extends IterativeRobot {
         SmartDashboard.putData("Robot Configuration", robotPicker);
         
         updateSettings();
+        ballManipulator.init();
         
         updatables = new List();
-        updatables.put(transmissionSolenoid);
+//        updatables.put(transmissionSolenoid);
         updatables.put(ballManipulator);
         updatables.put(driveControl);
     }

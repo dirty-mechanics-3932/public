@@ -12,9 +12,10 @@ import org.dirtymechanics.frc.component.arm.event.BoomRestButtonEventHandler;
 import org.dirtymechanics.frc.control.OperatorGameController;
 import org.dirtymechanics.frc.control.OperatorJoystick;
 import org.dirtymechanics.frc.sensor.RotationalEncoder;
+import org.dirtymechanics.frc.util.Updatable;
 
 
-public class PIDBoom {
+public class PIDBoom implements Updatable {
     PIDSubsystem pid;
     private BoomProperties boomProperties = new BoomProps();
     Talon motor;
@@ -48,6 +49,13 @@ public class PIDBoom {
         this.operatorJoy = operatorJoy;
         this.gameController = gameController;
 
+        increaseOffsetButtonEventHandler = new BoomIncreaseOffsetButtonEventHandler(operatorJoy, this);
+        decreaseOffsetButtonEventHandler = new BoomDecreaseOffsetButtonEventHandler(operatorJoy, this);
+        restButtonEventHandler = new BoomRestButtonEventHandler(gameController, this);
+        highButtonEventHandler = new BoomHighButtonEventHandler(gameController, this);
+        passButtonEventHandler = new BoomPassButtonEventHandler(gameController, this);
+        groundButtonEventHandler = new BoomGroundButtonEventHandler(gameController, this);
+        
     }
     
     public void init() {

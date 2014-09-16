@@ -86,6 +86,7 @@ public class BallManipulator implements Updatable {
         screwDrive.init();
         fireButtonHandler = new FireButtonEventHandler(operatorController, this);
         fireButtonListener.addHandler(fireButtonHandler);
+        roller.init();
         boom.init();
         
     }
@@ -120,15 +121,15 @@ public class BallManipulator implements Updatable {
     //TODO move this stuff into grabber
     public void updateOcto() {
         updateOctoSwitch();
-        if (octoSwitchOpen) {
-            if (System.currentTimeMillis() - octoTime > 250) {
-                if (!operatorController.isRollerReverseButtonPressed()) {
-                    grabber.openLarge();
-                    
-                }
-                if (System.currentTimeMillis() - octoTime > 600) {
-                    roller.closeArm();
-                }
+        final long timeSinceOctoSwitchOpen = System.currentTimeMillis() - octoTime;
+        if (octoSwitchOpen && timeSinceOctoSwitchOpen < 1000) {        
+ 
+            if (timeSinceOctoSwitchOpen > 600) {
+                roller.closeArm();
+            }
+            
+            if (timeSinceOctoSwitchOpen > 250) {               
+                grabber.closeLarge();
                 grabber.closeSmall();
             }
         }

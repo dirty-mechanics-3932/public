@@ -13,9 +13,9 @@ package org.dirtymechanics.frc.control;
 public class OperatorGameController extends edu.wpi.first.wpilibj.Joystick implements BasicJoystick, GameController {
     public static final int OPERATOR_CONTROLLER_USB_PORT = 3;
     
-    public static final int PASS_BUTTON = 1;
-    public static final int GROUND_BUTTON = 2;
-    public static final int REST_BUTTON = 3;
+    public static final int PASS_BUTTON = 2;
+    public static final int GROUND_BUTTON = 3;
+    public static final int REST_BUTTON = 1;
     public static final int HIGH_GOAL_BUTTON = 4;
     public static final int ROLLER_ARM_JOY_BUTTON = 5;
     public static final int FIRE_BUTTON = 6;

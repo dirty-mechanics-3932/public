@@ -50,9 +50,15 @@ public class WoollyGrabber implements Grabber, Updatable {
     
     public WoollyGrabber(OperatorGameController gameController) {
         this.gameController = gameController;
+        largeButtonEventHandler = new GrabberLargeButtonEventHandler(gameController, this);
+        smallButtonEventHandler = new GrabberSmallButtonEventHandler(gameController, this);
+        largeButtonListener.addHandler(largeButtonEventHandler);
+        smallButtonListener.addHandler(smallButtonEventHandler);
+        this.gameController = gameController;
     }
 
     public void openSmall() {
+        System.out.println("open small grabber arms");
         smallSolenoids.open();
     }
 
@@ -81,6 +87,9 @@ public class WoollyGrabber implements Grabber, Updatable {
     }
     
     public void update() {
+        long currentTime = System.currentTimeMillis();
+        largeButtonListener.updateState(gameController.isLargeGrabberButtonPressed(), currentTime);
+        smallButtonListener.updateState(gameController.isSmallGrabberButtonPressed(), currentTime);
     }
 
     public boolean isOpenSmall() {

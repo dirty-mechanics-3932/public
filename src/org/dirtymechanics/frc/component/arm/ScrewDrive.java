@@ -70,6 +70,13 @@ public class ScrewDrive implements Updatable {
         trussButtonHandler = new ScrewDriveTrussButtonEventHandler(operatorController, this);
         increaseOffsetButtonHandler = new ScrewDriveIncreaseOffsetButtonEventHandler(operatorController, this);
         decreaseOffsetButtonHandler = new ScrewDriveDecreaseOffsetButtonEventHandler(operatorController, this);
+        highButtonListener.addHandler(highButtonHandler);
+        passButtonListener.addHandler(passButtonHandler);
+        resetButtonListener.addHandler(resetButtonHandler);
+        trussButtonListener.addHandler(trussButtonHandler);
+        increaseOffsetButtonListener.addHandler(increaseOffsetButtonHandler);
+        decreaseOffsetButtonListener.addHandler(decreaseOffsetButtonHandler);
+        
     }
     
     public void reset() {
