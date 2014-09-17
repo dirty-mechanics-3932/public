@@ -27,7 +27,7 @@ import org.dirtymechanics.event.ButtonEventHandler;
 //the button for the update loop, just the time.  That will allow testing
 //while getting rid of making sure you always pass the correct button.
 public class ButtonListener {
-    public static final int PRESS_MILLIS = 1000;
+    public static final int PRESS_MILLIS = 2000; 
     public static final int NEUTRAL = 0;
     public static final int PRESS = 1;
     public static final int SINGLE_CLICK = 2;

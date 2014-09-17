@@ -57,6 +57,7 @@ public class FireControl implements Updatable {
                 }
                 //Keep this in here so we only reset controls after firing...
                 if (isTimeToResetFireControls()) {
+                    System.out.println("resetting fire controls");
                     debug("reset");
                     resetFireControls();
                 }
@@ -70,6 +71,7 @@ public class FireControl implements Updatable {
         debug("resetting");
 //        disableToggles();
         firing = false;
+        fired = false;
         ballManipulator.resetScrewDrive();
         
     }

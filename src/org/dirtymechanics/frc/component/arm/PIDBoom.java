@@ -85,7 +85,6 @@ public class PIDBoom implements Updatable {
         }
 
         protected double returnPIDInput() {
-           
            return rot.pidGet();
         }
 

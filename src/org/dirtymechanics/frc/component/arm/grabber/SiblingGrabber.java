@@ -19,12 +19,15 @@ public class SiblingGrabber extends WoollyGrabber implements Grabber, Updatable{
     /**
      * grabberSolenoids opens the arms
      */
-    private Solenoid grabOpen = new Solenoid(1, 1);
-    private Solenoid grabClose = new Solenoid(1, 2);
-    private DoubleSolenoid grabberSolenoids = new DoubleSolenoid(grabOpen, grabClose);
+//    private Solenoid grabOpen = new Solenoid(1, 1);
+//    private Solenoid grabClose = new Solenoid(1, 2);
+//    private DoubleSolenoid grabberSolenoids = new DoubleSolenoid(grabOpen, grabClose);
     
     public SiblingGrabber(OperatorGameController gameController) {
         super(gameController);
+        
+        // Sorry about the utter lack of principle here
+        largeSolenoids = smallSolenoids;
         
     }
     

@@ -1,8 +1,8 @@
 package org.dirtymechanics.frc.component.arm;
 
 public class BoomProps implements BoomProperties {
-   double P = .018d;
-   double D = .009; // The boom, she wants the D
+   double P = .016d;
+   double D = .012; // The boom, she wants the D
    
    PIDBoom.Location pidPass = new PIDBoom.Location(500);//GROUND;//new Location(3.26);
    PIDBoom.Location pidArmUpLimit = new PIDBoom.Location(150);//GROUND;//new Location(3.26);

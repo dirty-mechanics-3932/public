@@ -19,15 +19,9 @@ import org.dirtymechanics.frc.util.Updatable;
  *
  * @author Daniel Ruess
  */
-public class ScrewDrive implements Updatable {
+public class ScrewDrive implements Updatable{
     private final Jaguar motor = new Jaguar(6);
     private final StringEncoder string = new StringEncoder(1);
-
-    public static final Location TRUSS_SHOT = new Location(2.168);
-    public static final Location PASS = new Location(1.5);
-    public static final Location HIGH_GOAL = new Location(2.168); //2.55
-    public static final Location AUTONOMOUS_SHOT = HIGH_GOAL;//new Location(2.45);
-    public static final Location RESET = new Location(0.45); //(0.577); 
     NetworkTable server = NetworkTable.getTable("SmartDashboard");
     
     /**
@@ -53,15 +47,20 @@ public class ScrewDrive implements Updatable {
     private ButtonListener decreaseOffsetButtonListener = new ButtonListener();
     private OperatorGameController operatorController;
     
+    private ScrewProperties props;
+    
     
 
 
     public ScrewDrive(OperatorGameController operatorController) {
         //TODO talk to the team about having this be still when we enable the robot.
-        set(PASS);
+//        set(props.pass());
         this.operatorController = operatorController;
     }
     
+    public void setProperties(ScrewProperties p){
+        props = p;
+    }
     public void init() {
         LiveWindow.addSensor("Boom", "String Encoder", string);
         highButtonHandler = new ScrewDriveHighButtonEventHandler(operatorController, this);
@@ -80,23 +79,23 @@ public class ScrewDrive implements Updatable {
     }
     
     public void reset() {
-        set(ScrewDrive.RESET);
+        set(props.reset());
     }
     
     public void trussShot() {
-        set(ScrewDrive.TRUSS_SHOT);
+        set(props.trussShot());
     }
     
     public void pass() {
-        set(ScrewDrive.PASS);
+        set(props.pass());
     }
     
     public void high() {
-        set(ScrewDrive.HIGH_GOAL);
+        set(props.highGoal());
     }
     
     public void autonomous() {
-        set(ScrewDrive.AUTONOMOUS_SHOT);
+        set(props.highGoal());
     }
     
     
@@ -156,8 +155,8 @@ public class ScrewDrive implements Updatable {
             }
         } else {
             motor.set(0);
-            if (dest == RESET.loc) {
-                set(HIGH_GOAL);
+            if (dest == props.reset().loc) {
+                set(props.highGoal());
             }
         }
     }
@@ -171,7 +170,7 @@ public class ScrewDrive implements Updatable {
 
         private final double loc;
 
-        private Location(double loc) {
+        public Location(double loc) {
             this.loc = loc;
         }
     }

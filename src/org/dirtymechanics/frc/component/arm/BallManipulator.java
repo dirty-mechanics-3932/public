@@ -88,11 +88,13 @@ public class BallManipulator implements Updatable {
         if (robotType == RobotType.WOOLLY) {
             boom = new PIDBoom(boomMotor, rotEncoder, operatorJoy, operatorController);
             grabber = new WoollyGrabber(operatorController);
+            screwDrive.setProperties(new ScrewPropsWoolly());
         }
         else if (robotType == RobotType.SIBLING){
             boom = new PIDBoomSibling(boomMotor, rotEncoder, operatorJoy, operatorController);
             grabber = new SiblingGrabber(operatorController);
-        }        shooter = new Shooter();
+            screwDrive.setProperties(new ScrewPropsSibling());
+        }   shooter = new Shooter(); // Shouldn't this be initialized for Woolly as well?
     }
     
     private boolean isArmingRange() {
@@ -211,6 +213,7 @@ public class BallManipulator implements Updatable {
     }
 
     void openFire() {
+        System.out.println("depressing seatbelt");
         shooter.fire();
     }
 

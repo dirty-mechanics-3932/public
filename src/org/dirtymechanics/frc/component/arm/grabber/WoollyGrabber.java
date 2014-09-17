@@ -34,7 +34,7 @@ public class WoollyGrabber implements Grabber, Updatable {
     /**
     Small solenoids extend arms out to slightly open
     */
-    private DoubleSolenoid smallSolenoids = new DoubleSolenoid(grabSmallOpen, grabSmallClose);
+    DoubleSolenoid smallSolenoids = new DoubleSolenoid(grabSmallOpen, grabSmallClose);
     
     Solenoid grabLargeOpen = new Solenoid(1, 5);
     Solenoid grabLargeClose = new Solenoid(1, 6);
