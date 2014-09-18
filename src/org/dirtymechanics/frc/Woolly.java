@@ -93,14 +93,11 @@ public class Woolly extends IterativeRobot {
         LiveWindow.addSensor("Drive", "Ultrasonic", ballManipulator.ultrasonicSensor);
         LiveWindow.addSensor("Boom", "Octo Safety", ballManipulator.octo);
         compressor.start();
-        server.putNumber("idealMaxRange", idealMaxAutoRange);
-        server.putNumber("idealMinRange", idealMinAutoRange);
-        server.putNumber("BOOM.ROT.PID.IN", 0d);
 
         robotPicker = new SendableChooser();
         
-        robotPicker.addDefault("Competition Robot (Default)", RobotType.WOOLLY);
-        robotPicker.addObject("Sibling Robot", RobotType.SIBLING);
+        robotPicker.addObject("Robot", RobotType.SIBLING);
+//        robotPicker.addObject("Sibling Robot", RobotType.SIBLING);
         
         SmartDashboard.putData("Robot Configuration", robotPicker);
         
@@ -235,7 +232,7 @@ public class Woolly extends IterativeRobot {
         
         driveControl.setSpeed();
         
-        setTransmission(driveControl.isTransmissionHigh());
+        setTransmission(driveControl.isTransmissionHigh()); 
         //TODO isn't this being done by update?  It should be...
         
         updateRangeLEDs();
@@ -264,12 +261,6 @@ public class Woolly extends IterativeRobot {
     }
 
     void printDebug() {
-        server.putNumber("BOOM.ROT", ballManipulator.rotEncoder.getAverageVoltage());
-        server.putNumber("BOOM.ROT.PID", ballManipulator.rotEncoder.pidGet());
-        server.putNumber("BOOM.RANGE.V", ballManipulator.ultrasonicSensor.getAverageVoltage());
-        server.putNumber("IMAGE.CONF", imageMatchConfidence);
-        server.putNumber("BOOM.RANGE.I", ballManipulator.ultrasonicSensor.getRangeInInches());
-        server.putBoolean("OCT", ballManipulator.octo.get());
     }
 
 

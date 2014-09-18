@@ -16,9 +16,9 @@ import org.dirtymechanics.frc.sensor.RotationalEncoder;
  * @author agresh
  */
 public class PIDBoomSibling extends PIDBoom {
-
     public PIDBoomSibling(Talon motor, RotationalEncoder rot, OperatorJoystick operatorJoy, OperatorGameController gameController) {
         super(motor, rot, operatorJoy, gameController);
+        boomProperties = new BoomPropsSibling();
     }
     
 }

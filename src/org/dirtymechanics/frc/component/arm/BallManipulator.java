@@ -38,7 +38,7 @@ public class BallManipulator implements Updatable {
     
     
     private long octoTime;
-    private boolean octoSwitchOpen;
+    private boolean octoSwitchClosed;
 
     
     
@@ -85,12 +85,12 @@ public class BallManipulator implements Updatable {
     }
     
     public void setType(RobotType robotType) {
-        if (robotType == RobotType.WOOLLY) {
+        server.putString("Robot Type", robotType==RobotType.WOOLLY ? "Woolly" : "Sibling");
+        if (robotType.equals(RobotType.WOOLLY)) {
             boom = new PIDBoom(boomMotor, rotEncoder, operatorJoy, operatorController);
             grabber = new WoollyGrabber(operatorController);
             screwDrive.setProperties(new ScrewPropsWoolly());
-        }
-        else if (robotType == RobotType.SIBLING){
+        } else {
             boom = new PIDBoomSibling(boomMotor, rotEncoder, operatorJoy, operatorController);
             grabber = new SiblingGrabber(operatorController);
             screwDrive.setProperties(new ScrewPropsSibling());
@@ -112,9 +112,12 @@ public class BallManipulator implements Updatable {
     
     //TODO move this stuff into grabber
     public void updateOcto() {
+        server.putBoolean("OctoSwitch.ballDetected", octoSwitchClosed);
+        server.putBoolean("Graber.largeOpen", grabber.isOpenLarge());
+        server.putBoolean("Graber.smallOpen", grabber.isOpenSmall());
         updateOctoSwitch();
         final long timeSinceOctoSwitchOpen = System.currentTimeMillis() - octoTime;
-        if (octoSwitchOpen && timeSinceOctoSwitchOpen < 1000) {        
+        if (octoSwitchClosed && timeSinceOctoSwitchOpen < 1000) {        
  
             if (timeSinceOctoSwitchOpen > 600) {
                 roller.closeArm();
@@ -129,12 +132,12 @@ public class BallManipulator implements Updatable {
 
     public void updateOctoSwitch() {
         if (isBallSwitchOpen()) {
-            if (!octoSwitchOpen) {
-                octoSwitchOpen = true;
+            if (!octoSwitchClosed) {
+                octoSwitchClosed = true;
                 octoTime = System.currentTimeMillis();
             }
         } else {
-            octoSwitchOpen = false;
+            octoSwitchClosed = false;
         }
     }
 

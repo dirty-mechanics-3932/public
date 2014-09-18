@@ -69,5 +69,9 @@ public class BoomProps implements BoomProperties {
         return moveIncrementSize;
     }
 
+    public double sign() {
+        return 1;
+    }
+
     
 }

@@ -2,6 +2,7 @@ package org.dirtymechanics.frc.component.arm;
 
 import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.command.PIDSubsystem;
+import edu.wpi.first.wpilibj.networktables.NetworkTable;
 import org.dirtymechanics.event.impl.ButtonListener;
 import org.dirtymechanics.frc.component.arm.event.BoomDecreaseOffsetButtonEventHandler;
 import org.dirtymechanics.frc.component.arm.event.BoomGroundButtonEventHandler;
@@ -17,7 +18,7 @@ import org.dirtymechanics.frc.util.Updatable;
 
 public class PIDBoom implements Updatable {
     PIDSubsystem pid;
-    private BoomProperties boomProperties = new BoomProps();
+    public BoomProperties boomProperties = new BoomProps();
     Talon motor;
     RotationalEncoder rot;
     public boolean BOOM_ENABLED = true;
@@ -39,7 +40,9 @@ public class PIDBoom implements Updatable {
     BoomGroundButtonEventHandler groundButtonEventHandler;
     ButtonListener groundButtonListener = new ButtonListener();
     OperatorGameController gameController;
+    private Location currentPosition;
     
+    NetworkTable server = NetworkTable.getTable("SmartDashboard");
     
     
     public PIDBoom(Talon motor, RotationalEncoder rot, OperatorJoystick operatorJoy, OperatorGameController gameController) {
@@ -89,7 +92,7 @@ public class PIDBoom implements Updatable {
         }
 
        protected void usePIDOutput(double output) {
-           motor.set(output);
+           motor.set(boomProperties.sign()*output);
        }
 
        protected void initDefaultCommand() {
@@ -101,23 +104,29 @@ public class PIDBoom implements Updatable {
     }
     
     public void high() {
-        set(getBoomProperties().getHighGoal());
+        currentPosition = getBoomProperties().getHighGoal();
+        set(currentPosition);
+        
     }
     
     public void pass() {
-        set(getBoomProperties().getPass());
+        currentPosition = getBoomProperties().getPass();
+        set(currentPosition);
     }
     
     public void rest() {
-        set(getBoomProperties().getRest());
+        currentPosition = getBoomProperties().getRest();
+        set(currentPosition);
     }
     
     public void ground() {
-        set(getBoomProperties().getGround());
+        currentPosition = getBoomProperties().getGround();
+        set(currentPosition);
     }
     
     public void autonomous() {
-        set(getBoomProperties().getAutonomousShot());
+        currentPosition = getBoomProperties().getAutonomousShot();
+        set(currentPosition);
     }
    
     public void update() {
@@ -129,6 +138,8 @@ public class PIDBoom implements Updatable {
         highButtonListener.updateState(gameController.isHighGoalButtonPressed(), currentTime);
         passButtonListener.updateState(gameController.isPassButtonPressed(), currentTime);
         groundButtonListener.updateState(gameController.isGroundButtonPressed(), currentTime);
+        server.putNumber("Boom.destination", currentPosition.loc);
+        server.putNumber("BOOM.ROT.PID", rot.pidGet());
     }
     
     public void increaseOffset() {

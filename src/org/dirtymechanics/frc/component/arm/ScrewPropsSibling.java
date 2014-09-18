@@ -10,10 +10,25 @@ package org.dirtymechanics.frc.component.arm;
  *
  * @author frc
  */
-public class ScrewPropsSibling extends ScrewPropsWoolly {
+public class ScrewPropsSibling implements ScrewProperties {
     ScrewDrive.Location HIGH_GOAL = new ScrewDrive.Location(2.244); //2.55
     ScrewDrive.Location PASS = new ScrewDrive.Location(1.576);
-    ScrewDrive.Location RESET = new ScrewDrive.Location(0.526); //(0.577);
+    ScrewDrive.Location RESET = new ScrewDrive.Location(0.265); //(0.577);
     ScrewDrive.Location TRUSS_SHOT = new ScrewDrive.Location(2.244);
-    ScrewDrive.Location AUTONOMOUS_SHOT = HIGH_GOAL; //new Location(2.45);
+
+    public ScrewDrive.Location highGoal() {
+        return HIGH_GOAL;
+    }
+
+    public ScrewDrive.Location pass() {
+        return PASS;
+    }
+
+    public ScrewDrive.Location reset() {
+        return RESET;
+    }
+
+    public ScrewDrive.Location trussShot() {
+        return TRUSS_SHOT;
+    }
 }

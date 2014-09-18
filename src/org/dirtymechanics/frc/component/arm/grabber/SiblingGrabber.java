@@ -26,10 +26,19 @@ public class SiblingGrabber extends WoollyGrabber implements Grabber, Updatable{
     public SiblingGrabber(OperatorGameController gameController) {
         super(gameController);
         
-        // Sorry about the utter lack of principle here
-        largeSolenoids = smallSolenoids;
-        
     }
+    
+    public void openLarge() {
+        //no large solenoids on sibling
+    }
+
+    public void closeLarge() {
+        //no large solenoids on sibling
+    }
+    
+    public void flipLarge() {
+        //no large solenoids on sibling
+    } 
     
 
     

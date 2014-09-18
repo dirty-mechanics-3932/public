@@ -30,7 +30,7 @@ public class ScrewDrive implements Updatable{
     private static final double SPEED = 1D; //TODO: calculate this.
 
 
-    private double dest;
+    private double dest = 1;
     private int speedScale = 0;
     //TODO move all these handlers and listeners to the operator controller
     private ScrewDriveHighButtonEventHandler highButtonHandler;
@@ -80,22 +80,27 @@ public class ScrewDrive implements Updatable{
     
     public void reset() {
         set(props.reset());
+        server.putString("ScrewDrive.position", "resetting...");
     }
     
     public void trussShot() {
         set(props.trussShot());
+        server.putString("ScrewDrive.position", "truss");
     }
     
     public void pass() {
         set(props.pass());
+        server.putString("ScrewDrive.position", "pass");
     }
     
     public void high() {
         set(props.highGoal());
+        server.putString("ScrewDrive.position", "high");
     }
     
     public void autonomous() {
         set(props.highGoal());
+        server.putString("ScrewDrive.position", "auto shot");
     }
     
     
@@ -126,12 +131,13 @@ public class ScrewDrive implements Updatable{
 
     public void update() {
         seekSetPoint();
-        server.putNumber("BOOM.LIN", string.getAverageVoltage());
+        server.putNumber("ScrewDrive.location", string.getAverageVoltage());
         long currentTime = System.currentTimeMillis();
         highButtonListener.updateState(operatorController.isScrewDriveHighPressed(), currentTime);
         passButtonListener.updateState(operatorController.isScrewDrivePassPressed(), currentTime);
         resetButtonListener.updateState(operatorController.isScrewDriveResetPressed(), currentTime);
         trussButtonListener.updateState(operatorController.isScrewDriveTrussPressed(), currentTime);
+        server.putNumber("ScrewDrive.destination", dest);
     }
 
     void seekSetPoint() {
@@ -157,6 +163,7 @@ public class ScrewDrive implements Updatable{
             motor.set(0);
             if (dest == props.reset().loc) {
                 set(props.highGoal());
+                server.putString("ScrewDrive.position", "high");
             }
         }
     }
