@@ -176,27 +176,27 @@ public class Woolly extends IterativeRobot {
                 hot = true;
             }
             
-//            if (dist > 150) {
-//                driveControl.setSpeed(.75, .80); //.43
-//                server.putString("Auto", "Driving");
-//            } else if (dist > 92) {
-//                driveControl.setSpeed(.3, .3); //.43
-//                server.putString("Auto", "Slowing");
-//            } else if (dist > 75 && dist < 85) {
-//                driveControl.setSpeed(0, 0);
-//                server.putString("Auto", "Stopped at range");
-//            } else if (dist < 75) {
-//                driveControl.setSpeed(-.3, -.3);
-//                server.putString("Auto", "Overshot");
-//            } else {
-//                driveControl.setSpeed(0, 0);
-//                server.putString("Auto", "Stopped");
-//            }
+            if (dist > 100) {
+                driveControl.setRawSpeed(.80, .80); //.43
+                server.putString("Auto", "Driving");
+            } else if (dist > 80) {
+                driveControl.setRawSpeed(.4, .3); //.43
+                server.putString("Auto", "Slowing");
+            } else if (dist > 70 && dist < 80) {
+                driveControl.setRawSpeed(0, 0);
+                server.putString("Auto", "Stopped at range");
+            } else if (dist < 65) {
+                driveControl.setRawSpeed(-.3, -.3);
+                server.putString("Auto", "Overshot");
+            } else {
+                driveControl.setRawSpeed(0, 0);
+                server.putString("Auto", "Stopped");
+            }
         } else {
-//            driveControl.setSpeed(0, 0);
+            driveControl.setRawSpeed(0, 0);
         }
         
-        driveForwardUntil3rdSecondOfAutonomous();
+//        driveForwardUntil3rdSecondOfAutonomous();
 
         if (time > 4400) {
             if (hot || imageMatchConfidence > imageMatchConfidenceLimit || time > 6000) {
