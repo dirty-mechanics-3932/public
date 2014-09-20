@@ -98,7 +98,7 @@ public class Woolly extends IterativeRobot {
 
         robotPicker = new SendableChooser();
         
-        robotPicker.addObject("Robot", RobotType.WOOLLY);
+        robotPicker.addObject("Robot", RobotType.SIBLING);
 //        robotPicker.addObject("Sibling Robot", RobotType.SIBLING);
         
         SmartDashboard.putData("Robot Configuration", robotPicker);
