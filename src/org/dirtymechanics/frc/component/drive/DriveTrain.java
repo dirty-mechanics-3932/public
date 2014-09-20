@@ -36,7 +36,7 @@ public class DriveTrain implements Updatable {
      *
      * @param speed The speed.
      */
-    private void setLeftSpeed(double speed) {
+    public void setLeftSpeed(double speed) {
         driveLeftA.set(-speed);
         driveLeftB.set(-speed);
     }
@@ -46,7 +46,7 @@ public class DriveTrain implements Updatable {
      *
      * @param speed The speed.
      */
-    private void setRightSpeed(double speed) {
+    public void setRightSpeed(double speed) {
         driveRightA.set(speed);
         driveRightB.set(speed);
     }

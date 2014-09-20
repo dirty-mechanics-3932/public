@@ -151,6 +151,8 @@ public class BallManipulator implements Updatable {
         boom.update();
         
         fireControl.update();
+        
+        server.putNumber("Ultra Distance", ultrasonicSensor.getAverageVoltage());
     }
     
     

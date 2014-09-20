@@ -11,8 +11,8 @@ public class BoomProps implements BoomProperties {
    PIDBoom.Location min = new PIDBoom.Location(769);
 
    PIDBoom.Location rest = new PIDBoom.Location(247);
-   PIDBoom.Location autonomousShot = new PIDBoom.Location(336);
-   PIDBoom.Location highGoal = new PIDBoom.Location(336);
+   PIDBoom.Location autonomousShot = new PIDBoom.Location(328);
+   PIDBoom.Location highGoal = new PIDBoom.Location(328);
    PIDBoom.Location ground = min;
    PIDBoom.Location pass = new PIDBoom.Location(535);
    int moveIncrementSize = 10;
