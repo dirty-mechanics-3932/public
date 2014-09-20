@@ -54,7 +54,10 @@ public class DriveControl implements Updatable {
         
     }
     
-    
+    public void setRawSpeed(double leftSpeed, double rightSpeed){
+        driveTrain.setLeftSpeed(leftSpeed);
+        driveTrain.setRightSpeed(rightSpeed);
+    }
 
     public boolean isTransmissionHigh() {
         return right.isTransmissionHigh();

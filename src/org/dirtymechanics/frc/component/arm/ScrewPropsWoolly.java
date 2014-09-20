@@ -13,10 +13,10 @@ import org.dirtymechanics.frc.component.arm.ScrewDrive.Location;
  * @author frc
  */
 public class ScrewPropsWoolly implements ScrewProperties {
-    Location HIGH_GOAL = new Location(2.168); //2.55
+    Location HIGH_GOAL = new Location(2.5); //2.55
     Location PASS = new Location(1.5);
     Location RESET = new Location(0.45); //(0.577);
-    Location TRUSS_SHOT = new Location(2.168);
+    Location TRUSS_SHOT = new Location(2.5);
     Location AUTONOMOUS_SHOT = HIGH_GOAL; //new Location(2.45);
 
 

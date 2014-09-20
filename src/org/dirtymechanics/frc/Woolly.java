@@ -98,7 +98,7 @@ public class Woolly extends IterativeRobot {
 
         robotPicker = new SendableChooser();
         
-        robotPicker.addObject("Robot", RobotType.SIBLING);
+        robotPicker.addObject("Robot", RobotType.WOOLLY);
 //        robotPicker.addObject("Sibling Robot", RobotType.SIBLING);
         
         SmartDashboard.putData("Robot Configuration", robotPicker);
@@ -110,6 +110,9 @@ public class Woolly extends IterativeRobot {
 //        updatables.put(transmissionSolenoid);
         updatables.put(ballManipulator);
         updatables.put(driveControl);
+        
+        cameraLEDA.set(true);
+        cameraLEDB.set(true);
     }
     
     void updateSettings() {
@@ -135,6 +138,7 @@ public class Woolly extends IterativeRobot {
         cameraLEDB.set(true);
     }
     private boolean hot = false;
+    private boolean firedAuto = false;
 
     /**
      * This function is called periodically during autonomous.
@@ -146,6 +150,9 @@ public class Woolly extends IterativeRobot {
         double dist = ballManipulator.ultrasonicSensor.getRangeInInches();
 
         imageMatchConfidence = server.getNumber("HOT_CONFIDENCE", 0.0);
+        
+        //Limit below-->the higher it is the more specificity needed
+        double imageMatchConfidenceLimit = 35;
 
         if (ballManipulator.octo.get() && time < 3000) {
             ballManipulator.rollerForward();
@@ -165,32 +172,35 @@ public class Woolly extends IterativeRobot {
                 ballManipulator.setBoomAutonomouseShot();
                 
             }
-            if (imageMatchConfidence > 35 && time > 300) {
+            if (imageMatchConfidence > imageMatchConfidenceLimit && time > 300) {
                 hot = true;
             }
-            if (dist > 150) {
-                driveControl.setSpeed(.75, .80); //.43
-                server.putString("Auto", "Driving");
-            } else if (dist > 92) {
-                driveControl.setSpeed(.3, .3); //.43
-                server.putString("Auto", "Slowing");
-            } else if (dist > 75 && dist < 85) {
-                driveControl.setSpeed(0, 0);
-                server.putString("Auto", "Stopped at range");
-            } else if (dist < 75) {
-                driveControl.setSpeed(-.3, -.3);
-                server.putString("Auto", "Overshot");
-            } else {
-                driveControl.setSpeed(0, 0);
-                server.putString("Auto", "Stopped");
-            }
+            
+//            if (dist > 150) {
+//                driveControl.setSpeed(.75, .80); //.43
+//                server.putString("Auto", "Driving");
+//            } else if (dist > 92) {
+//                driveControl.setSpeed(.3, .3); //.43
+//                server.putString("Auto", "Slowing");
+//            } else if (dist > 75 && dist < 85) {
+//                driveControl.setSpeed(0, 0);
+//                server.putString("Auto", "Stopped at range");
+//            } else if (dist < 75) {
+//                driveControl.setSpeed(-.3, -.3);
+//                server.putString("Auto", "Overshot");
+//            } else {
+//                driveControl.setSpeed(0, 0);
+//                server.putString("Auto", "Stopped");
+//            }
         } else {
-            driveControl.setSpeed(0, 0);
+//            driveControl.setSpeed(0, 0);
         }
         
+        driveForwardUntil3rdSecondOfAutonomous();
 
         if (time > 4400) {
-            if (hot || imageMatchConfidence > 35 || time > 6000) {
+            if (hot || imageMatchConfidence > imageMatchConfidenceLimit || time > 6000) {
+                System.out.println("Shooting...");
                 ballManipulator.shootAutonomous(time);
             }
         }
@@ -205,6 +215,7 @@ public class Woolly extends IterativeRobot {
         } else {
             signalLEDB.set(false);
         }
+        
         printDebug();
     }
 
@@ -212,10 +223,10 @@ public class Woolly extends IterativeRobot {
 
     void driveForwardUntil3rdSecondOfAutonomous() {
         long time = System.currentTimeMillis() - autoStart;
-        if (time < 3000) {
-            driveControl.setSpeed(-.73, .75);
+        if (time < 2900) {
+            driveControl.setRawSpeed(.73, .8); 
         } else {
-            driveControl.setSpeed(0, 0);
+            driveControl.setRawSpeed(0, 0);
         }
 
     }
@@ -229,7 +240,7 @@ public class Woolly extends IterativeRobot {
         if (counter++ % 20 == 0) { //call per 20 cycles
             systemTime = System.currentTimeMillis();
             printDebug();
-            turnOffLEDs();
+//            turnOffLEDs();
         }
         
         driveControl.setSpeed();
