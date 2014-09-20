@@ -99,8 +99,10 @@ public class FireControl implements Updatable {
     }
     
     public void fire() {
-        ballManipulator.openFire();
-        actualFireTime = currentTimeMillis;        
+        if (ballManipulator.isBallDetected()) {
+            ballManipulator.openFire();
+            actualFireTime = currentTimeMillis;        
+        }
     }
     
    
@@ -125,15 +127,20 @@ public class FireControl implements Updatable {
     
     
     public void shootAutonomous(long time) {
+//        if (!firing) {
+//            ballManipulator.openRollerArm();
+//            ballManipulator.openSmall();
+//            firing = true;
+//            fireButtonPressTime = currentTimeMillis;
+//        }
+//        if ((time > 6300 || currentTimeMillis - fireButtonPressTime > 300)) {
+//            ballManipulator.openFire();
+//            fired = true;
+//        }
+        //Only trip the firing sequence once.
         if (!firing) {
-            ballManipulator.openRollerArm();
-            ballManipulator.openSmall();
-            firing = true;
-            fireButtonPressTime = currentTimeMillis;
-        }
-        if ((time > 6300 || currentTimeMillis - fireButtonPressTime > 300)) {
-            ballManipulator.openFire();
-            fired = true;
+            
+            ballManipulator.startImmediateFiringSequence(System.currentTimeMillis());
         }
     }
     
