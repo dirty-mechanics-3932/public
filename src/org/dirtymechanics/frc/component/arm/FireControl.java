@@ -133,7 +133,7 @@ public class FireControl implements Updatable {
         }
         if ((time > 6300 || currentTimeMillis - fireButtonPressTime > 300)) {
             ballManipulator.openFire();
-            firing = false;
+            fired = true;
         }
     }
     
