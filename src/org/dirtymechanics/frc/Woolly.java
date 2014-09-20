@@ -98,7 +98,7 @@ public class Woolly extends IterativeRobot {
 
         robotPicker = new SendableChooser();
         
-        robotPicker.addObject("Robot", RobotType.SIBLING);
+        robotPicker.addObject("Robot", RobotType.WOOLLY);
 //        robotPicker.addObject("Sibling Robot", RobotType.SIBLING);
         
         SmartDashboard.putData("Robot Configuration", robotPicker);
@@ -176,27 +176,27 @@ public class Woolly extends IterativeRobot {
                 hot = true;
             }
             
-            if (dist > 150) {
-                driveControl.setSpeed(.75, .80); //.43
-                server.putString("Auto", "Driving");
-            } else if (dist > 92) {
-                driveControl.setSpeed(.3, .3); //.43
-                server.putString("Auto", "Slowing");
-            } else if (dist > 75 && dist < 85) {
-                driveControl.setSpeed(0, 0);
-                server.putString("Auto", "Stopped at range");
-            } else if (dist < 75) {
-                driveControl.setSpeed(-.3, -.3);
-                server.putString("Auto", "Overshot");
-            } else {
-                driveControl.setSpeed(0, 0);
-                server.putString("Auto", "Stopped");
-            }
+//            if (dist > 150) {
+//                driveControl.setSpeed(.75, .80); //.43
+//                server.putString("Auto", "Driving");
+//            } else if (dist > 92) {
+//                driveControl.setSpeed(.3, .3); //.43
+//                server.putString("Auto", "Slowing");
+//            } else if (dist > 75 && dist < 85) {
+//                driveControl.setSpeed(0, 0);
+//                server.putString("Auto", "Stopped at range");
+//            } else if (dist < 75) {
+//                driveControl.setSpeed(-.3, -.3);
+//                server.putString("Auto", "Overshot");
+//            } else {
+//                driveControl.setSpeed(0, 0);
+//                server.putString("Auto", "Stopped");
+//            }
         } else {
-            driveControl.setSpeed(0, 0);
+//            driveControl.setSpeed(0, 0);
         }
         
-//        driveForwardUntil3rdSecondOfAutonomous();
+        driveForwardUntil3rdSecondOfAutonomous();
 
         if (time > 4400) {
             if (hot || imageMatchConfidence > imageMatchConfidenceLimit || time > 6000) {
