@@ -68,6 +68,7 @@ public class BallManipulator implements Updatable {
     
 
     FireControl fireControl;
+    private boolean autonomousShotFired = false;
     
     
     
@@ -223,7 +224,10 @@ public class BallManipulator implements Updatable {
     }
 
     public void shootAutonomous(long time) {
-        fireControl.shootAutonomous(time);
+        if (!autonomousShotFired) {
+            fireControl.shootAutonomous(time);
+            autonomousShotFired = true;
+        }
     }
    
     
