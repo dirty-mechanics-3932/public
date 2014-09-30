@@ -68,6 +68,7 @@ public class BallManipulator implements Updatable {
     
 
     FireControl fireControl;
+    private boolean autonomousShotFired = false;
     
     
     
@@ -105,7 +106,7 @@ public class BallManipulator implements Updatable {
         return ultrasonicSensor.getRangeInInches() > 75 && ultrasonicSensor.getRangeInInches() < 85;
     }
     
-    public boolean isBallSwitchOpen() {
+    public boolean isBallDetected() {
         return !octo.get();
     }
 
@@ -131,7 +132,7 @@ public class BallManipulator implements Updatable {
     }
 
     public void updateOctoSwitch() {
-        if (isBallSwitchOpen()) {
+        if (isBallDetected()) {
             if (!octoSwitchClosed) {
                 octoSwitchClosed = true;
                 octoTime = System.currentTimeMillis();
@@ -163,7 +164,7 @@ public class BallManipulator implements Updatable {
      * Called from event handler once when button is pressed
      * @param time 
      */
-    public void startImmediateFiringSequance(long time) {
+    public void startImmediateFiringSequence(long time) {
        fireControl.startFiringSequence(time);
     }
 
@@ -223,7 +224,10 @@ public class BallManipulator implements Updatable {
     }
 
     public void shootAutonomous(long time) {
-        fireControl.shootAutonomous(time);
+        if (!autonomousShotFired) {
+            fireControl.shootAutonomous(time);
+            autonomousShotFired = true;
+        }
     }
    
     

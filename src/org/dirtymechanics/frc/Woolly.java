@@ -28,6 +28,8 @@ import org.dirtymechanics.frc.util.Updatable;
  * directory.
  */
 public class Woolly extends IterativeRobot {
+    public static final int AUTONOMOUS_DRIVE_TIME = 4400;
+    public static final int MAX_CONFIDENCE_WAIT = 6000;
 
     
     private final Compressor compressor = new Compressor(1, 1);
@@ -98,7 +100,7 @@ public class Woolly extends IterativeRobot {
 
         robotPicker = new SendableChooser();
         
-        robotPicker.addObject("Robot", RobotType.WOOLLY);
+        robotPicker.addObject("Robot", RobotType.SIBLING);
 //        robotPicker.addObject("Sibling Robot", RobotType.SIBLING);
         
         SmartDashboard.putData("Robot Configuration", robotPicker);
@@ -146,7 +148,8 @@ public class Woolly extends IterativeRobot {
     public void autonomousPeriodic() {
         //TODO the guts of this method should be broken out into a 
         //periodic class that is broken into more managable methods.
-        long time = System.currentTimeMillis() - autoStart;
+        ballManipulator.update();
+        long timeElapsedSinceAutoStarted = System.currentTimeMillis() - autoStart;
         double dist = ballManipulator.ultrasonicSensor.getRangeInInches();
 
         imageMatchConfidence = server.getNumber("HOT_CONFIDENCE", 0.0);
@@ -154,55 +157,26 @@ public class Woolly extends IterativeRobot {
         //Limit below-->the higher it is the more specificity needed
         double imageMatchConfidenceLimit = 35;
 
-        if (ballManipulator.octo.get() && time < 3000) {
+        if (ballManipulator.octo.get() && timeElapsedSinceAutoStarted < 3000) {
             ballManipulator.rollerForward();
         } else {
             ballManipulator.rollerStop();
         }
 
-        if (time < 4200) {
-            if (time < 175) {
-                ballManipulator.rollerArmOpen();
-//                grabSmallSolenoid.setOpen();
-                ballManipulator.grabber.openSmall();
-            } else {
-                ballManipulator.roller.closeArm();
-//                grabSmallSolenoid.setClosed();
-                ballManipulator.grabber.closeSmall();
-                ballManipulator.setBoomAutonomouseShot();
-                
-            }
-            if (imageMatchConfidence > imageMatchConfidenceLimit && time > 300) {
-                hot = true;
-            }
-            
-            if (dist > 100) {
-                driveControl.setRawSpeed(.80, .80); //.43
-                server.putString("Auto", "Driving");
-            } else if (dist > 80) {
-                driveControl.setRawSpeed(.4, .3); //.43
-                server.putString("Auto", "Slowing");
-            } else if (dist > 70 && dist < 80) {
-                driveControl.setRawSpeed(0, 0);
-                server.putString("Auto", "Stopped at range");
-            } else if (dist < 65) {
-                driveControl.setRawSpeed(-.3, -.3);
-                server.putString("Auto", "Overshot");
-            } else {
-                driveControl.setRawSpeed(0, 0);
-                server.putString("Auto", "Stopped");
-            }
+        if (timeElapsedSinceAutoStarted < 4200) {
+            loadBall(timeElapsedSinceAutoStarted);
+            checkForHotGoal(imageMatchConfidenceLimit, timeElapsedSinceAutoStarted);
+            driveForward(dist);
         } else {
             driveControl.setRawSpeed(0, 0);
         }
         
 //        driveForwardUntil3rdSecondOfAutonomous();
 
-        if (time > 4400) {
-            if (hot || imageMatchConfidence > imageMatchConfidenceLimit || time > 6000) {
-                System.out.println("Shooting...");
-                ballManipulator.shootAutonomous(time);
-            }
+        if (isTimeForAutonomousShot(timeElapsedSinceAutoStarted, imageMatchConfidenceLimit)) {
+            System.out.println("Shooting...");
+            ballManipulator.shootAutonomous(System.currentTimeMillis());
+            
         }
         update();
         if (dist < 85) {
@@ -218,6 +192,51 @@ public class Woolly extends IterativeRobot {
         
         printDebug();
     }
+
+    public void driveForward(double dist) {
+        if (dist > 100) {
+            driveControl.setRawSpeed(.80, .80); //.43
+            server.putString("Auto", "Driving");
+        } else if (dist > 80) {
+            driveControl.setRawSpeed(.4, .3); //.43
+            server.putString("Auto", "Slowing");
+        } else if (dist > 70 && dist < 80) {
+            driveControl.setRawSpeed(0, 0);
+            server.putString("Auto", "Stopped at range");
+        } else if (dist < 65) {
+            driveControl.setRawSpeed(-.3, -.3);
+            server.putString("Auto", "Overshot");
+        } else {
+            driveControl.setRawSpeed(0, 0);
+            server.putString("Auto", "Stopped");
+        }
+    }
+
+    public void checkForHotGoal(double imageMatchConfidenceLimit, long timeElapsedSinceAutoStarted) {
+        if (imageMatchConfidence > imageMatchConfidenceLimit && timeElapsedSinceAutoStarted > 300) {
+            hot = true;
+        }
+    }
+
+    public void loadBall(long timeElapsedSinceAutoStarted) {
+        if (timeElapsedSinceAutoStarted < 175) {
+            ballManipulator.rollerArmOpen();
+//                grabSmallSolenoid.setOpen();
+            ballManipulator.grabber.openSmall();
+        } else {
+            ballManipulator.roller.closeArm();
+//                grabSmallSolenoid.setClosed();
+            ballManipulator.grabber.closeSmall();
+            ballManipulator.setBoomAutonomouseShot();
+            
+        }
+    }
+
+    public boolean isTimeForAutonomousShot(long time, double imageMatchConfidenceLimit) {
+        return time > MAX_CONFIDENCE_WAIT;
+//        return (time > AUTONOMOUS_DRIVE_TIME) && (hot || imageMatchConfidence > imageMatchConfidenceLimit || time > MAX_CONFIDENCE_WAIT);
+    }
+
 
     
 
