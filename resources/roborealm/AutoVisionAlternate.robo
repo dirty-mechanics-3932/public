@@ -1,0 +1,161 @@
+<head><version>2.63.15</version></head>
+<Load_Image disabled>
+  <filename>.\GitHub\2014Robot\VisionBeta\VisionImages\2014 Vision Target\Center.jpg</filename>
+  <frame_delay>33</frame_delay>
+  <load_numbered_images>FALSE</load_numbered_images>
+  <numerical_sort>TRUE</numerical_sort>
+  <page_number>1</page_number>
+  <recursive>TRUE</recursive>
+</Load_Image>
+<Axis_Internet_Camera>
+  <auto_back_light>TRUE</auto_back_light>
+  <auto_exposure>FALSE</auto_exposure>
+  <auto_white_balance>TRUE</auto_white_balance>
+  <brightness_value>50</brightness_value>
+  <camera_type>1</camera_type>
+  <color_level_value>50</color_level_value>
+  <compression_index>7</compression_index>
+  <contrast_value>50</contrast_value>
+  <exposure_value>50</exposure_value>
+  <ip_address>10.39.32.11</ip_address>
+  <is_active>TRUE</is_active>
+  <mirrot>FALSE</mirrot>
+  <password>admin</password>
+  <port>80</port>
+  <resolution>640x480</resolution>
+  <sharpness_value>50</sharpness_value>
+  <username>root</username>
+</Axis_Internet_Camera>
+<Radial_Distortion>
+  <center_x>0.5</center_x>
+  <center_y>0.5</center_y>
+  <coeff_a>-1121</coeff_a>
+  <coeff_b>0.525</coeff_b>
+  <coeff_c>0.0</coeff_c>
+  <coeff_d>0.0</coeff_d>
+  <coeff_e>0.0</coeff_e>
+  <crop_image>FALSE</crop_image>
+  <scale>1000.0</scale>
+</Radial_Distortion>
+<Exponential/>
+<Grayscale disabled>
+  <method>8</method>
+</Grayscale>
+<Adaptive_Threshold>
+  <channel_type>2</channel_type>
+  <filter_size>35</filter_size>
+  <max_threshold>255</max_threshold>
+  <mean_offset>0</mean_offset>
+  <min_threshold>175</min_threshold>
+</Adaptive_Threshold>
+<Blob_Filter disabled>
+  <create_blob_array_variable>FALSE</create_blob_array_variable>
+  <filters>
+    <tab>
+      <filter>
+        <count_threshold>0</count_threshold>
+        <create_array>0</create_array>
+        <filter_id>27</filter_id>
+        <invert_count>0</invert_count>
+        <invert_threshold>0</invert_threshold>
+        <rgb_color>#FFFFFF</rgb_color>
+        <weight_threshold>0.01</weight_threshold>
+      </filter>
+    </tab>
+    <tab:2>
+      <filter>
+        <count_threshold>1200</count_threshold>
+        <create_array>0</create_array>
+        <filter_id>10</filter_id>
+        <invert_count>0</invert_count>
+        <invert_threshold>0</invert_threshold>
+        <weight_threshold>0</weight_threshold>
+      </filter>
+    </tab:2>
+    <tab:3/>
+    <tab:4/>
+    <tab:5/>
+    <tab:6/>
+  </filters>
+  <font_size>Tiny (6pt)</font_size>
+  <largest_is_background>FALSE</largest_is_background>
+  <show_mode>3</show_mode>
+  <show_weights>FALSE</show_weights>
+  <sort_array_on_x>FALSE</sort_array_on_x>
+  <sort_array_on_y>FALSE</sort_array_on_y>
+</Blob_Filter>
+<Blob_Replace disabled>
+  <color_index>7</color_index>
+  <fill_shape>TRUE</fill_shape>
+  <order_array_on_x>FALSE</order_array_on_x>
+  <order_array_on_y>FALSE</order_array_on_y>
+  <shape_index>15</shape_index>
+  <thickness>1</thickness>
+</Blob_Replace>
+<Blob_Replace>
+  <color_index>7</color_index>
+  <fill_shape>TRUE</fill_shape>
+  <order_array_on_x>FALSE</order_array_on_x>
+  <order_array_on_y>FALSE</order_array_on_y>
+  <thickness>1</thickness>
+</Blob_Replace>
+<Shape_Match>
+  <absent_after_frames>0</absent_after_frames>
+  <base_folder>.</base_folder>
+  <color_index>2</color_index>
+  <create_shape_array>FALSE</create_shape_array>
+  <display_box>TRUE</display_box>
+  <display_confidence>TRUE</display_confidence>
+  <display_coord>FALSE</display_coord>
+  <display_filename>TRUE</display_filename>
+  <display_orientation>FALSE</display_orientation>
+  <display_result>-1</display_result>
+  <display_size>FALSE</display_size>
+  <font_size_index>2</font_size_index>
+  <high_resolution_orientation>FALSE</high_resolution_orientation>
+  <is_mirrored_invariant>FALSE</is_mirrored_invariant>
+  <is_rotational_invariant>FALSE</is_rotational_invariant>
+  <max_angle>360</max_angle>
+  <max_confidence>100</max_confidence>
+  <max_size>1000</max_size>
+  <min_angle>0</min_angle>
+  <min_confidence>0</min_confidence>
+  <min_size>100</min_size>
+  <monitor_folder>FALSE</monitor_folder>
+  <overlay_image>Current</overlay_image>
+  <present_after_frames>0</present_after_frames>
+  <select_top_blobs>5</select_top_blobs>
+  <sort_array_on_x>FALSE</sort_array_on_x>
+  <sort_array_on_y>FALSE</sort_array_on_y>
+</Shape_Match>
+<Set_Variable>
+  <set_1_array>TRUE</set_1_array>
+  <set_1_once>FALSE</set_1_once>
+  <set_2_array>FALSE</set_2_array>
+  <set_2_once>FALSE</set_2_once>
+  <set_3_array>FALSE</set_3_array>
+  <set_3_once>FALSE</set_3_once>
+  <set_4_array>FALSE</set_4_array>
+  <set_4_once>FALSE</set_4_once>
+  <value_1>[SHAPE_CONFIDENCE]</value_1>
+  <variable_1>HOT_CONFIDENCE</variable_1>
+</Set_Variable>
+<Display_Variables>
+  <border_color>dark gray</border_color>
+  <dim_background>TRUE</dim_background>
+  <display_as_annotation>FALSE</display_as_annotation>
+  <display_value_only>FALSE</display_value_only>
+  <font_color>green</font_color>
+  <font_size>Small (8pt)</font_size>
+  <northwest>HOT_CONFIDENCE
+</northwest>
+</Display_Variables>
+<NetworkTables>
+  <delay>100</delay>
+  <filter_type_index>0</filter_type_index>
+  <hostname>10.39.32.2</hostname>
+  <port>1735</port>
+  <prefix>/SmartDashboard/</prefix>
+  <variables_to_send>HOT_CONFIDENCE</variables_to_send>
+  <variable_type_index>0</variable_type_index>
+</NetworkTables>
