@@ -74,4 +74,6 @@ public interface BoomProperties {
     
     
     int getMoveIncrementSize();
+
+    public double sign();
 }

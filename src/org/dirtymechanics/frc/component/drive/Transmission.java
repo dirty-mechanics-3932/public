@@ -15,11 +15,11 @@ public class Transmission {
     }
 
     public void setHigh() {
-        solenoid.set(true);
+        solenoid.open();
     }
 
     public void setLow() {
-        solenoid.set(false);
+        solenoid.close();
     }
 
 }

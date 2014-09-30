@@ -43,7 +43,6 @@ public class PIDDistanceDrive {
        protected void usePIDOutput(double output) {
            double reverseOutput = -1 * output; // Reverse wheel direction
            driveTrain.setSpeed(reverseOutput, reverseOutput);
-           System.out.println("drive.set(" + reverseOutput +") + "  + "rangefinder.pidGet()=" + rangefinder.pidGet() + " getSetpoint()=" + getSetpoint() + " getPostion()=" + getPosition());
        }
 
        protected void initDefaultCommand() {

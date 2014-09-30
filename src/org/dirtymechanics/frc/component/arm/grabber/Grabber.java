@@ -6,12 +6,14 @@
 
 package org.dirtymechanics.frc.component.arm.grabber;
 
+import org.dirtymechanics.frc.util.Updatable;
+
 /**
  * Represents a grabber (i.e. the side arms on the robot).
  * 
  * @author Zach Sussman
  */
-public interface Grabber {
+public interface Grabber extends Updatable {
     
     public abstract void openSmall();
     public abstract void closeSmall();
@@ -20,5 +22,9 @@ public interface Grabber {
     public abstract void openLarge();
     public abstract void closeLarge();
     public abstract void flipLarge();
+
+    public boolean isOpenLarge();
+
+    public boolean isOpenSmall();
     
 }

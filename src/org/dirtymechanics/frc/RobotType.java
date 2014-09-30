@@ -17,15 +17,14 @@ public class RobotType {
     private static int next_number = 0;
     
     private final int value;
-    public RobotType(){
-        value = next_number;
-        next_number += 1;
+    public RobotType(int type){
+        value = type;
     }
     
     
-    public static final RobotType WOOLLY = new RobotType();
-    public static final RobotType SIBLING = new RobotType();
-    public static final RobotType GENERIC = new RobotType();
+    public static final RobotType WOOLLY = new RobotType(1);
+    public static final RobotType SIBLING = new RobotType(2);
+    public static final RobotType GENERIC = new RobotType(3);
     
 
 

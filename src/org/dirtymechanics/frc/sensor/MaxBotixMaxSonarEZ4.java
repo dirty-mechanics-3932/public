@@ -20,11 +20,8 @@ public class MaxBotixMaxSonarEZ4 extends AnalogChannel{
     }
     
     public double getRangeInInches(double averageVoltage) {
-        //System.out.println("converting " + averageVoltage);
-        //System.out.println("conversion factor " + INCHES_PER_VOLT);
         double inches = averageVoltage * INCHES_PER_VOLT;
         
-        //System.out.println("returning " + inches);
         return inches;
     }
     

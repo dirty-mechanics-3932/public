@@ -5,15 +5,16 @@
  */
 
 package org.dirtymechanics.frc.component.arm;
+import org.dirtymechanics.frc.component.arm.ScrewDrive.Location;
 
 /**
  *
- * @author agresh
+ * @author frc
  */
-public class SiblingBoomProps extends CompetitionBoomProps {
-    //For now sibling and Competition are the same.  Place overrides here.
+public interface ScrewProperties {
     
-    public int getMoveIncrementSize(){
-        return -10;
-    }
+    public Location highGoal();
+    public Location pass();
+    public Location reset();
+    public Location trussShot();
 }
