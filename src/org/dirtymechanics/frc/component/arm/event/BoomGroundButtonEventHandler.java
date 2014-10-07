@@ -5,7 +5,6 @@ import org.dirtymechanics.event.ButtonEventHandler;
 import org.dirtymechanics.event.impl.ButtonListener;
 import org.dirtymechanics.frc.component.arm.PIDBoom;
 import org.dirtymechanics.frc.control.OperatorGameController;
-import org.dirtymechanics.frc.control.OperatorJoystick;
 
 
 
