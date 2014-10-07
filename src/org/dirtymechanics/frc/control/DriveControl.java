@@ -17,10 +17,8 @@ import org.dirtymechanics.frc.util.Updatable;
 public class DriveControl implements Updatable {
 //    private DriverLeftStick left;
 //    private DriverRightStick right;
-    private final DriverLeftStick left = new DriverLeftStick(DRIVER_LEFT_JOY_USB_PORT);
-    public static final int DRIVER_LEFT_JOY_USB_PORT = 1;
-    private final DriverRightStick right = new DriverRightStick(DRIVER_RIGHT_JOY_USB_PORT);
-    public static final int DRIVER_RIGHT_JOY_USB_PORT = 2;
+    private final DriverLeftStick left;
+    private final DriverRightStick right;
     /**
      * Jaguar that's driving the first left motor.
      */
@@ -39,7 +37,10 @@ public class DriveControl implements Updatable {
     private final Jaguar rightDriveMotorB = new Jaguar(4);
     private final DriveTrain driveTrain = new DriveTrain(leftDriveMotorA, leftDriveMotorB, rightDriveMotorA, rightDriveMotorB);
     
-    public DriveControl() {
+    
+    public DriveControl(DriverLeftStick left, DriverRightStick right) {
+        this.left = left;
+        this.right = right;
     }
         
     public void setSpeed() {

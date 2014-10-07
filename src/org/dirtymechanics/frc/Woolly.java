@@ -1,11 +1,10 @@
-// Sibling
+// Woolly
 
 package org.dirtymechanics.frc;
 
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.IterativeRobot;
 
-import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
@@ -13,9 +12,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.dirtymechanics.frc.actuator.DoubleSolenoid;
 import org.dirtymechanics.frc.component.arm.BallManipulator;
-import org.dirtymechanics.frc.component.arm.ScrewDrive;
 import org.dirtymechanics.frc.component.drive.Transmission;
 import org.dirtymechanics.frc.control.DriveControl;
+import org.dirtymechanics.frc.control.DriverLeftStick;
+import org.dirtymechanics.frc.control.DriverRightStick;
+import org.dirtymechanics.frc.sensor.Camera;
+import org.dirtymechanics.frc.sensor.CameraButtonEventHandler;
+import org.dirtymechanics.frc.sensor.CameraButtonListener;
 import org.dirtymechanics.frc.sensor.PIDDistanceDrive;
 import org.dirtymechanics.frc.util.List;
 import org.dirtymechanics.frc.util.Updatable;
@@ -28,6 +31,10 @@ import org.dirtymechanics.frc.util.Updatable;
  * directory.
  */
 public class Woolly extends IterativeRobot {
+    private final DriverLeftStick left = new DriverLeftStick(DRIVER_LEFT_JOY_USB_PORT);
+    public static final int DRIVER_LEFT_JOY_USB_PORT = 1;
+    private final DriverRightStick right = new DriverRightStick(DRIVER_RIGHT_JOY_USB_PORT);
+    public static final int DRIVER_RIGHT_JOY_USB_PORT = 2;
     public static final int AUTONOMOUS_DRIVE_TIME = 4400;
     public static final int MAX_CONFIDENCE_WAIT = 6000;
 
@@ -49,7 +56,7 @@ public class Woolly extends IterativeRobot {
     private final DoubleSolenoid transmissionSolenoid = new DoubleSolenoid(transOpen, transClose);
     
     
-    private final DriveControl driveControl = new DriveControl();
+    private final DriveControl driveControl = new DriveControl(left, right);
     
     /**
      * List of all the updatable objects.
@@ -81,6 +88,10 @@ public class Woolly extends IterativeRobot {
     
     BallManipulator ballManipulator = new BallManipulator();
     long systemTime = 0;
+    Camera camera = new Camera(cameraLEDA ,cameraLEDB);
+    CameraButtonListener cameraButtonListner = new CameraButtonListener(left);
+    CameraButtonEventHandler cameraButtonHandler = new CameraButtonEventHandler(camera);
+
     
 
     public Woolly() {
@@ -90,6 +101,7 @@ public class Woolly extends IterativeRobot {
      * Called per first initialization of the robot.
      */
     public void robotInit() {
+        cameraButtonListner.addHandler(cameraButtonHandler);
         //TODO since we're adding sensors here do we need all the debugging or is it
         //just noise in the dashboard?
         //See if we can send some better telemetry back
@@ -100,7 +112,7 @@ public class Woolly extends IterativeRobot {
 
         robotPicker = new SendableChooser();
         
-        robotPicker.addObject("Robot", RobotType.SIBLING);
+        robotPicker.addObject("Robot", RobotType.WOOLLY);
 //        robotPicker.addObject("Sibling Robot", RobotType.SIBLING);
         
         SmartDashboard.putData("Robot Configuration", robotPicker);
@@ -112,6 +124,7 @@ public class Woolly extends IterativeRobot {
 //        updatables.put(transmissionSolenoid);
         updatables.put(ballManipulator);
         updatables.put(driveControl);
+        updatables.put(cameraButtonListner);
         
         cameraLEDA.set(true);
         cameraLEDB.set(true);
@@ -305,6 +318,7 @@ public class Woolly extends IterativeRobot {
             Updatable ud = (Updatable) o[i];
             ud.update();
         }
+        
     }
 
     public void teleopInit() {
